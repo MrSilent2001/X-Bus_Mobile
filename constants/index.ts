@@ -31,6 +31,9 @@ import onboarding1 from "@/assets/images/onboarding1.png";
 import onboarding2 from "@/assets/images/onboarding2.png";
 import onboarding3 from "@/assets/images/onboarding3.png";
 import signUpCar from "@/assets/images/signup-car.png";
+import welcome1 from "@/assets/images/welcome1.jpg";
+import welcome2 from "@/assets/images/welcome2.jpg";
+import welcome3 from "@/assets/images/welcome3.jpg";
 
 export const images = {
     onboarding1,
@@ -41,6 +44,9 @@ export const images = {
     check,
     noResult,
     message,
+    welcome1,
+    welcome2,
+    welcome3
 };
 
 export const icons = {
@@ -76,22 +82,22 @@ export const welcome = [
         id: 1,
         title: "The perfect ride is just a tap away!",
         description:
-            "Your journey begins with Ryde. Find your ideal ride effortlessly.",
-        image: images.onboarding1,
+            "Your journey begins with X-Bus. Find your ideal ride effortlessly.",
+        image: images.welcome1,
     },
     {
         id: 2,
-        title: "Best car in your hands with Ryde",
+        title: "Best travel experience in your hands with X-Bus",
         description:
-            "Discover the convenience of finding your perfect ride with Ryde",
-        image: images.onboarding2,
+            "Discover the convenience of finding your perfect ride with X-Bus",
+        image: images.welcome2,
     },
     {
         id: 3,
-        title: "Your ride, your way. Let's go!",
+        title: "Your journey, your way. Let's go!",
         description:
             "Enter your destination, sit back, and let us take care of the rest.",
-        image: images.onboarding3,
+        image: images.welcome3,
     },
 ];
 

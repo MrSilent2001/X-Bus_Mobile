@@ -13,7 +13,7 @@ const Welcome = () =>{
     const isLastSlide = activeIndex === welcome.length - 1;
 
     return(
-        <SafeAreaView className="flex h-full items-center justify-between bg-white mb-20">
+        <SafeAreaView className="flex h-full items-center justify-between bg-white mb-28">
             <TouchableOpacity onPress={()=>{
                 router.replace("/(auth)/signup");
             }}
@@ -56,7 +56,7 @@ const Welcome = () =>{
                         ? router.replace("/(auth)/signup")
                         : swiperRef.current?.scrollBy(1)
                 }}
-                className="w-11/12 mb-5"
+                className="w-11/12 mx-safe-or-5"
             />
         </SafeAreaView>
     );
