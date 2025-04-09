@@ -13,7 +13,7 @@ const Welcome = () =>{
     const isLastSlide = activeIndex === welcome.length - 1;
 
     return(
-        <SafeAreaView className="flex h-full items-center justify-between bg-white mb-28">
+        <SafeAreaView className="flex-1 items-center justify-between bg-white">
             <TouchableOpacity onPress={()=>{
                 router.replace("/(auth)/signup");
             }}
@@ -49,15 +49,17 @@ const Welcome = () =>{
                 ))}
             </Swiper>
 
-            <CustomButton
-                title={isLastSlide ? "Get Started" : "Next"}
-                onPress={() =>{
-                    isLastSlide
-                        ? router.replace("/(auth)/signup")
-                        : swiperRef.current?.scrollBy(1)
-                }}
-                className="w-11/12 mx-safe-or-5"
-            />
+            <View className="w-full flex items-center m-5">
+                <CustomButton
+                    title={isLastSlide ? "Get Started" : "Next"}
+                    onPress={() =>{
+                        isLastSlide
+                            ? router.replace("/(auth)/signup")
+                            : swiperRef.current?.scrollBy(1)
+                    }}
+                    className="w-2/3 mx-3"
+                />
+            </View>
         </SafeAreaView>
     );
 }
