@@ -1,83 +1,118 @@
-import {Image, ScrollView, Text, View} from "react-native";
-import {icons, images} from "@/constants";
+import {
+    Image,
+    Keyboard,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    Text,
+    TouchableWithoutFeedback,
+    View
+} from "react-native";
+import {images} from "@/constants";
 import InputField from "@/components/inputField";
 import {useState} from "react";
 import CustomButton from "@/components/customButton";
 import {Link, useRouter} from "expo-router";
 import OAuth from "@/components/OAuth";
+import PasswordField from "@/components/passwordField";
 
-const SignUp = () =>{
+const SignUp = () => {
     const router = useRouter()
 
     const [form, setForm] = useState({
         name: '',
         email: '',
-        password: ''
+        password: '',
+        confirmPassword: ''
     })
 
-    const onSignUpPress = () =>{
+    const onSignUpPress = () => {
         router.push("/login")
     }
 
-    return(
-        <ScrollView className="flex-1 bg-white">
-            <View className="flex-1 bg-white">
-                <View className="relative w-full h-[250px]">
-                    <Image
-                        source={images.signUpCar}
-                        className="z-0 w-full h-[250px]"
-                    />
+    return (
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <ScrollView className="flex-1 bg-white" keyboardShouldPersistTaps="handled">
+                    <View className="flex-1 bg-white">
+                        <View className="relative w-full h-[250px]">
+                            <Image
+                                source={images.signUpCar}
+                                className="z-0 w-full h-[250px]"
+                            />
 
-                    <Text className="text-2xl text-black font-JakartaSemiBold absolute bottom-5 left-5">
-                        Create Your Account
-                    </Text>
-                </View>
+                            <Text className="text-4xl text-center text-black font-JakartaBold bottom-10">
+                                Create Your Account
+                            </Text>
+                        </View>
 
-                <View className="p-5">
-                    <InputField
-                        label="Name"
-                        placeholder="Enter your name"
-                        icon={icons.person}
-                        value={form.name}
-                        onChangeText={(value) => setForm({...form, name: value})}
-                    />
-                    <InputField
-                        label="Email"
-                        placeholder="Enter your email"
-                        icon={icons.email}
-                        value={form.email}
-                        onChangeText={(value) => setForm({...form, email: value})}
-                    />
-                    <InputField
-                        label="Password"
-                        placeholder="Enter your password"
-                        icon={icons.lock}
-                        secureTextEntry={true}
-                        value={form.password}
-                        onChangeText={(value) => setForm({...form, password: value})}
-                    />
+                        <View className="p-5">
+                            <View className="mt-3">
+                                <Text className="text-lg font-JakartaSemiBold">Username</Text>
+                                <InputField
+                                    label="Username"
+                                    placeholder="Enter your username"
+                                    icon="person-outline"
+                                    value={form.name}
+                                    onChangeText={(value) => setForm({...form, name: value})}
+                                />
+                            </View>
 
-                    <View className="mt-10">
-                        <CustomButton
-                            title="Sign Up"
-                            onPress={onSignUpPress}
-                        />
+                            <View className="mt-3">
+                                <Text className="text-lg font-JakartaSemiBold">Email</Text>
+                                <InputField
+                                    label="Email"
+                                    placeholder="Enter your email"
+                                    icon="mail-outline"
+                                    value={form.email}
+                                    onChangeText={(value) => setForm({...form, email: value})}
+                                    keyboardType="email-address"
+                                />
+                            </View>
+
+                            <View className="mt-3">
+                                <Text className="text-lg font-JakartaSemiBold">Password</Text>
+                                <PasswordField
+                                    label="Password"
+                                    placeholder="Enter your password"
+                                    icon="lock-closed-outline"
+                                    value={form.password}
+                                    onChangeText={(value) => setForm({...form, password: value})}
+                                />
+                            </View>
+
+                            <View className="mt-3">
+                                <Text className="text-lg font-JakartaSemiBold">Confirm Password</Text>
+                                <PasswordField
+                                    label="Confirm Password"
+                                    placeholder="Confirm your password"
+                                    icon="lock-closed-outline"
+                                    value={form.confirmPassword}
+                                    onChangeText={(value) => setForm({...form, confirmPassword: value})}
+                                />
+                            </View>
+
+                            <View className="mt-5">
+                                <CustomButton
+                                    title="Sign Up"
+                                    onPress={onSignUpPress}
+                                />
+                            </View>
+
+                            {/*<OAuth/>*/}
+
+                            <Link
+                                href="/login"
+                                className="text-lg text-center text-general-200 mt-2"
+                            >
+                                Already have an account?{" "}
+                                <Text className="text-danger-500">Login</Text>
+                            </Link>
+                        </View>
                     </View>
-
-                    <OAuth/>
-
-                    <Link
-                        href="/login"
-                        className="text-lg text-center text-general-200 mt-2"
-                    >
-                        Already have an account?{" "}
-                        <Text className="text-primary-500">Login</Text>
-                    </Link>
-                </View>
-
-
-            </View>
-        </ScrollView>
+                </ScrollView>
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
     );
 }
 

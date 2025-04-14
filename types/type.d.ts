@@ -1,4 +1,5 @@
 import {TextInputProps, TouchableOpacityProps} from "react-native";
+import {a} from "@clerk/clerk-react/dist/useAuth-Do-ds1OD";
 
 declare interface Driver {
     driver_id: number;

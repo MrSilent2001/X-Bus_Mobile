@@ -26,6 +26,7 @@ const Layout = () => {
     return (
         <Tabs
             screenOptions={{
+                headerShown: false,
                 tabBarActiveTintColor: "white",
                 tabBarInactiveTintColor: "white",
                 tabBarShowLabel: false,
@@ -55,16 +56,16 @@ const Layout = () => {
             {/*    }}*/}
             {/*/>*/}
 
-            <Tabs.Screen
-                name="location"
-                options={{
-                    title: "Location",
-                    headerShown: false,
-                    tabBarIcon: ({focused}) => (
-                        <TabIcon focused={focused} source={icons.chat}/>
-                    )
-                }}
-            />
+            {/*<Tabs.Screen*/}
+            {/*    name="location"*/}
+            {/*    options={{*/}
+            {/*        title: "Location",*/}
+            {/*        headerShown: false,*/}
+            {/*        tabBarIcon: ({focused}) => (*/}
+            {/*            <TabIcon focused={focused} source={icons.chat}/>*/}
+            {/*        )*/}
+            {/*    }}*/}
+            {/*/>*/}
 
             {/*<Tabs.Screen*/}
             {/*    name="rides"*/}

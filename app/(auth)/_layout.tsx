@@ -7,6 +7,9 @@ const Layout = () => {
             <Stack.Screen name="welcome" options={{ headerShown: false }} />
             <Stack.Screen name="signup" options={{ headerShown: false }} />
             <Stack.Screen name="login" options={{ headerShown: false }} />
+            <Stack.Screen name="forgotPassword" options={{ headerShown: false }} />
+            <Stack.Screen name="verifyOTP" options={{ headerShown: false }} />
+            <Stack.Screen name="resetPassword" options={{ headerShown: false }} />
         </Stack>
     );
 }

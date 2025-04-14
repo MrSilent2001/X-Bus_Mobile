@@ -54,7 +54,7 @@ const Welcome = () =>{
                     title={isLastSlide ? "Get Started" : "Next"}
                     onPress={() =>{
                         isLastSlide
-                            ? router.replace("/(auth)/signup")
+                            ? router.replace("/(auth)/login")
                             : swiperRef.current?.scrollBy(1)
                     }}
                     className="w-2/3 mx-3"

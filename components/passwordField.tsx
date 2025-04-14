@@ -1,25 +1,25 @@
 import {
-    Keyboard,
-    KeyboardAvoidingView,
-    Platform,
     TextInput,
-    TouchableWithoutFeedback,
+    TouchableOpacity,
     View
 } from "react-native";
 import {useState} from "react";
 import {InputFieldProps} from "@/types/type";
 import {Ionicons} from "@expo/vector-icons";
 
-const InputField = ({
-                        labelStyle,
-                        label,
-                        icon,
-                        containerStyle,
-                        inputStyle,
-                        iconStyle,
-                        ...props
-                    }: InputFieldProps) => {
+const PasswordField = ({
+                           labelStyle,
+                           label,
+                           icon,
+                           secureTextEntry = false,
+                           containerStyle,
+                           inputStyle,
+                           iconStyle,
+                           ...props
+                       }: InputFieldProps) => {
     const [isFocused, setIsFocused] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+
 
     return (
         <View className="my-2 w-full">
@@ -37,13 +37,24 @@ const InputField = ({
 
                 <TextInput
                     className={`rounded-full p-4 font-JakartaSemiBold text-[15px] flex-1 ${inputStyle} text-left`}
+                    secureTextEntry={!showPassword}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
                     {...props}
                 />
+
+                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}
+                                  className="p-3 focus:? '#E74C3C' : '#A0A0A0'">
+                    <Ionicons
+                        name={showPassword ? "eye-outline" : "eye-off-outline"}
+                        size={20}
+                        color={isFocused ? '#E74C3C' : '#A0A0A0'}
+                        style={{marginRight: 5, ...iconStyle}}
+                    />
+                </TouchableOpacity>
             </View>
         </View>
     );
 };
 
-export default InputField;
+export default PasswordField;

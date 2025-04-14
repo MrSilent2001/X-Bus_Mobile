@@ -6,7 +6,7 @@ const getBgVariantStyle = (variant: ButtonProps["bgVariant"]) =>{
         case "primary":
             return "bg-blue-500";
         case "danger":
-            return "bg-red-500";
+            return "bg-red-700";
         case "success":
             return "bg-green-500";
         case "outline":
@@ -33,7 +33,7 @@ const getTextVariantStyle = (variant: ButtonProps["textVariant"]) =>{
 const CustomButton = ({
     onPress,
     title,
-    bgVariant="primary",
+    bgVariant="danger",
     textVariant="default",
     IconLeft,
     IconRight,

@@ -1,70 +1,115 @@
-import {Image, ScrollView, Text, View} from "react-native";
-import {icons, images} from "@/constants";
+import {Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, Text, TouchableWithoutFeedback, View} from "react-native";
+import {images} from "@/constants";
 import InputField from "@/components/inputField";
 import CustomButton from "@/components/customButton";
 import OAuth from "@/components/OAuth";
 import {Link, useRouter} from "expo-router";
 import {useState} from "react";
+import PasswordField from "@/components/passwordField";
+import {useAuthStore} from "@/store/authStore";
+import {Alert} from "react-native";
 
-const Login = () =>{
+interface User{
+    email: string;
+    password: string;
+}
+
+const Login = () => {
     const router = useRouter()
 
-    const [form, setForm] = useState({
+    const {user, isLoading,register} = useAuthStore();
+    //console.log(user)
+
+    const [form, setForm] = useState<User>({
         email: '',
         password: ''
-    })
+    });
 
-    const onSignInPress = () =>{
-        router.push("/")
+    const role = "passenger"
+
+    const onSignInPress = async(form: User, role: string) => {
+        const response = await register(form.email, form.password);
+        console.log(response)
+
+        if (!response.success){
+            Alert.alert("Error:", response.error);
+            console.log(response.error);
+            return;
+        }
+
+        if (role === "passenger") {
+            router.push("/(root)/(tabs)/passenger/home")
+        } else if (role === "operator") {
+            router.push("/(root)/(tabs)/operator/home")
+        } else {
+            router.push("/+not-found")
+        }
+
     }
 
-    return(
-        <ScrollView className="flex-1 bg-white">
-            <View className="flex-1 bg-white">
-                <View className="relative w-full h-[250px]">
-                    <Image
-                        source={images.signUpCar}
-                        className="z-0 w-full h-[250px]"
-                    />
+    return (
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <ScrollView className="flex-1 bg-white" keyboardShouldPersistTaps="handled">
+                        <View className="flex-1 bg-white">
+                            <View className="relative w-full h-[350px]">
+                                <Image
+                                    source={images.signUpCar}
+                                    className="z-0 w-full h-[350px]"
+                                />
 
-                    <Text className="text-2xl text-black font-JakartaSemiBold absolute bottom-5 left-5">
-                        Welcome
-                    </Text>
-                </View>
+                                <Text className="text-4xl text-center text-black font-JakartaBold bottom-10 ">
+                                    Welcome to X-Bus!
+                                </Text>
+                            </View>
 
-                <View className="p-5">
-                    <InputField
-                        label="Email"
-                        placeholder="Enter your email"
-                        icon={icons.email}
-                        value={form.email}
-                        onChangeText={(value) => setForm({...form, email: value})}
-                    />
-                    <InputField
-                        label="Password"
-                        placeholder="Enter your password"
-                        icon={icons.lock}
-                        secureTextEntry={true}
-                        value={form.password}
-                        onChangeText={(value) => setForm({...form, password: value})}
-                    />
+                            <View className="p-5">
+                                <View className="mt-3">
+                                    <Text className="text-lg font-JakartaSemiBold">Email</Text>
+                                    <InputField
+                                        label="Email"
+                                        placeholder="Enter your email"
+                                        icon="mail-outline"
+                                        value={form.email}
+                                        onChangeText={(value) => setForm({...form, email: value})}
+                                        keyboardType="email-address"
+                                    />
+                                </View>
 
-                    <View className="mt-10">
-                        <CustomButton
-                            title="Sign In"
-                            onPress={onSignInPress}
-                        />
-                    </View>
+                                <View className="mt-3">
+                                    <Text className="text-lg font-JakartaSemiBold">Password</Text>
+                                    <PasswordField
+                                        label="Password"
+                                        placeholder="Enter your password"
+                                        icon="lock-closed-outline"
+                                        value={form.password}
+                                        onChangeText={(value) => setForm({...form, password: value})}
+                                    />
+                                </View>
 
-                    <OAuth/>
+                                <Link href="/signup" className="text-lg text-general-200 mt-5 left-5">
+                                    <Text>Don't you have an Account? </Text>
+                                    <Text className="text-danger-500">SignUp</Text>
+                                </Link>
 
-                    <Link href="/signup" className="text-lg text-center text-general-200 mt-10">
-                        <Text>Already have an Account? </Text>
-                        <Text className="text-primary-500">SignUp</Text>
-                    </Link>
-                </View>
-            </View>
-        </ScrollView>
+                                <View className="mt-2">
+                                    <CustomButton
+                                        title="Sign In"
+                                        onPress={() => onSignInPress(form, role)}
+                                    />
+                                </View>
+
+                                {/*<OAuth/>*/}
+
+                                <Link href="/forgotPassword" className="text-lg text-center text-general-200 mt-2">
+                                    <Text>Forgot Password? </Text>
+                                    <Text className="text-danger-500">Reset Password</Text>
+                                </Link>
+                            </View>
+                        </View>
+                    </ScrollView>
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
     );
 }
 
