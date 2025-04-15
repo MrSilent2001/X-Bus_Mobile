@@ -4,10 +4,11 @@ import InputField from "@/components/inputField";
 import CustomButton from "@/components/customButton";
 import OAuth from "@/components/OAuth";
 import {Link, useRouter} from "expo-router";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import PasswordField from "@/components/passwordField";
 import {useAuthStore} from "@/store/authStore";
 import {Alert} from "react-native";
+import {parseJwt} from "@/util/parseJwt";
 
 interface User{
     email: string;
@@ -17,25 +18,29 @@ interface User{
 const Login = () => {
     const router = useRouter()
 
-    const {user, isLoading,register} = useAuthStore();
-    //console.log(user)
-
+    const {user, isLoading,token,checkAuth, login} = useAuthStore();
     const [form, setForm] = useState<User>({
         email: '',
         password: ''
     });
 
-    const role = "passenger"
+    useEffect(() => {
+        checkAuth();
+    }, []);
 
-    const onSignInPress = async(form: User, role: string) => {
-        const response = await register(form.email, form.password);
+    const onSignInPress = async(form: User) => {
+        const response = await login(form);
         console.log(response)
 
         if (!response.success){
             Alert.alert("Error:", response.error);
-            console.log(response.error);
             return;
         }
+
+        if (!token) throw new Error("Token not found");
+
+        const decodedToken = parseJwt(token);
+        const role = decodedToken.role;
 
         if (role === "passenger") {
             router.push("/(root)/(tabs)/passenger/home")
@@ -95,7 +100,7 @@ const Login = () => {
                                 <View className="mt-2">
                                     <CustomButton
                                         title="Sign In"
-                                        onPress={() => onSignInPress(form, role)}
+                                        onPress={() => onSignInPress(form)}
                                     />
                                 </View>
 

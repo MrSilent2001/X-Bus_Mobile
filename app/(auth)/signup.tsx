@@ -1,4 +1,5 @@
 import {
+    Alert,
     Image,
     Keyboard,
     KeyboardAvoidingView,
@@ -15,18 +16,44 @@ import CustomButton from "@/components/customButton";
 import {Link, useRouter} from "expo-router";
 import OAuth from "@/components/OAuth";
 import PasswordField from "@/components/passwordField";
+import {useAuthStore} from "@/store/authStore";
+
+interface User {
+    name: string;
+    email: string;
+    nic:string;
+    contactNo?: string;
+    password: string;
+    confirmPassword: string;
+    profilePicture?: string;
+    role?: string;
+}
 
 const SignUp = () => {
     const router = useRouter()
 
-    const [form, setForm] = useState({
+    const [form, setForm] = useState<User>({
         name: '',
         email: '',
+        nic: '',
         password: '',
         confirmPassword: ''
     })
+    const {user, isLoading,signup} = useAuthStore();
 
-    const onSignUpPress = () => {
+    const onSignUpPress = async(payload: User) => {
+        const response = await signup({
+            ...payload,
+            contactNo: '',
+            role: 'passenger',
+            profilePicture: 'https://th.bing.com/th/id/OIP.cjgNLtmwsA5WxCI1Jr3dqgHaHa?pid=ImgDet&w=184&h=184&c=7&dpr=1.3'
+        });
+        console.log(response)
+
+        if (!response.success){
+            Alert.alert("Error:", response.error);
+            return;
+        }
         router.push("/login")
     }
 
@@ -71,6 +98,17 @@ const SignUp = () => {
                             </View>
 
                             <View className="mt-3">
+                                <Text className="text-lg font-JakartaSemiBold">NIC</Text>
+                                <InputField
+                                    label="NIC "
+                                    placeholder="Enter your NIC"
+                                    icon="id-card-outline"
+                                    value={form.nic}
+                                    onChangeText={(value) => setForm({...form, nic: value})}
+                                />
+                            </View>
+
+                            <View className="mt-3">
                                 <Text className="text-lg font-JakartaSemiBold">Password</Text>
                                 <PasswordField
                                     label="Password"
@@ -95,7 +133,7 @@ const SignUp = () => {
                             <View className="mt-5">
                                 <CustomButton
                                     title="Sign Up"
-                                    onPress={onSignUpPress}
+                                    onPress={() => onSignUpPress(form)}
                                 />
                             </View>
 

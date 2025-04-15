@@ -1,6 +1,40 @@
 import {TextInputProps, TouchableOpacityProps} from "react-native";
 import {a} from "@clerk/clerk-react/dist/useAuth-Do-ds1OD";
 
+//====================================Auth============================================
+interface AuthResponse {
+    success: boolean;
+    error?: string;
+}
+
+interface User {
+    name: string;
+    email: string;
+    nic:string;
+    contactNo: string;
+    password: string;
+    confirmPassword: string;
+    profilePicture: string;
+    role: string;
+}
+
+interface LoginPayload {
+    email: string;
+    password: string;
+}
+
+interface authType{
+    user: User | null
+    token: string |null
+    email: string | null
+    isLoading: boolean
+
+    login: (payload: LoginPayload) => Promise<AuthResponse>
+    signup: (payload: User) => Promise<AuthResponse>
+    checkAuth: () => void
+    logout: () => void
+}
+
 declare interface Driver {
     driver_id: number;
     first_name: string;

@@ -3,14 +3,31 @@ import {Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, Text, Touch
 import {router} from "expo-router";
 import {icons, images} from "@/constants";
 import InputField from "@/components/inputField";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import axios from "axios";
+import {API_URL} from "@/constants/api";
+import {useAuthStore} from "@/store/authStore";
 
 const VerifyOTP = () => {
     const [form, setForm] = useState({
         otp: ''
     })
-    const onSignInPress = () => {
-        router.push("/resetPassword")
+    const {checkAuth, email} = useAuthStore();
+
+    useEffect(() => {
+        checkAuth();
+    }, []);
+
+    const onSignInPress = async() => {
+        try{
+            const response = await axios.post(`${API_URL}/auth/verify-otp/${form.otp}/${email}`)
+            if (response.status === 200) {
+                alert("OTP verification Successful");
+            }
+            router.push("/resetPassword")
+        }catch(error){
+            console.error("OTP verification failed:", error);
+        }
     }
     return (
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>

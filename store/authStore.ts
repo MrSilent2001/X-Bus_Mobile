@@ -1,45 +1,33 @@
 import {create} from "zustand"
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-interface AuthResponse {
-    success: boolean;
-    error?: string;
-}
-
-interface authType{
-    user: any
-    token: any
-    isLoading: boolean
-
-    register: (email: string, password: string) => Promise<AuthResponse>
-}
+import {authType, LoginPayload, User} from "@/types/type";
+import {API_URL} from "@/constants/api";
+import axios from "axios";
 
 export const useAuthStore = create<authType>((set) => ({
     user: null,
     token: null,
+    email: null,
     isLoading: false,
 
-    register: async(email, password) =>{
+    login: async(payload : LoginPayload) =>{
         set({isLoading: true})
 
         try {
-            const response = await fetch("http://10.0.2.2:8080/auth/login",{
-                method: "POST",
-                headers: {"content-type": "application/json"},
-                body: JSON.stringify({ email, password }),
+            const response = await axios.post(`${API_URL}/auth/login`, {
+                email: payload.email,
+                password: payload.password
             });
 
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.message || "Something went Wrong");
+            if (response.status === 200) {
+                await AsyncStorage.setItem("userId", JSON.stringify(response.data.userId));
+                await AsyncStorage.setItem("token", response.data.accessToken);
 
-            await AsyncStorage.setItem("userId", JSON.stringify(data.userId));
-            await AsyncStorage.setItem("token", data.accessToken);
-
-            set({token: data.accessToken, user: data.userId, isLoading: false});
-
-            return{
-                success: true,
+                set({token: response.data.accessToken, user: response.data.userId, isLoading: false});
             }
+
+            return{success: true}
+
         }catch (error:any){
             set({isLoading: false});
             return {
@@ -47,5 +35,56 @@ export const useAuthStore = create<authType>((set) => ({
                 error: error.message,
             }
         }
+    },
+
+    signup: async (payload: User) => {
+        set({ isLoading: true });
+
+        try {
+            const response = await axios.post(`${API_URL}/auth/signup`, {
+                name: payload.name,
+                nic: payload.nic,
+                contactNo: '',
+                email: payload.email,
+                password: payload.password,
+                confirmPassword: payload.confirmPassword,
+                role: payload.role,
+                profilePicture: payload.profilePicture
+            });
+
+            if (response.status === 200) {
+                console.log("SignUp Successful:");
+            }
+
+            return { success: true };
+        } catch (error: any) {
+            return {
+                success: false,
+                error: error.message,
+            };
+        } finally {
+            set({ isLoading: false });
+        }
+    },
+
+    checkAuth: async () => {
+        try {
+            const token = await AsyncStorage.getItem("token");
+            const userJSON = await AsyncStorage.getItem("userId");
+            const user = userJSON ? JSON.parse(userJSON) : null;
+            const email = await AsyncStorage.getItem("userEmail");
+
+            set({user, token, email});
+            console.log(email)
+        }catch (error:any){
+            console.log("Auth Check Failed:", error);
+        }
+    },
+
+    logout: async () => {
+        const token = await AsyncStorage.removeItem("token");
+        const user = await AsyncStorage.removeItem("userId");
+
+        set({user: null, token: null})
     }
 }));

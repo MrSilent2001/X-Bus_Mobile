@@ -1,17 +1,29 @@
 import CustomButton from "@/components/customButton";
 import {Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, Text, TouchableWithoutFeedback, View} from "react-native";
 import {router} from "expo-router";
-import {icons, images} from "@/constants";
+import {images} from "@/constants";
 import InputField from "@/components/inputField";
 import {useState} from "react";
+import axios from "axios";
+import {API_URL} from "@/constants/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ForgotPassword = () => {
     const [form, setForm] = useState({
         email: ''
     })
 
-    const onSignInPress = () => {
-        router.push("/verifyOTP")
+    const onSignInPress = async() => {
+        try{
+            const response = await axios.post(`${API_URL}/auth/forgot-password/${form.email}`)
+            if (response.status === 200) {
+                alert("OTP Sent Successfully");
+            }
+            await AsyncStorage.setItem("userEmail", form.email);
+            router.push("/verifyOTP")
+        }catch(error){
+            console.error("OTP sending failed:", error);
+        }
     }
     return (
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>

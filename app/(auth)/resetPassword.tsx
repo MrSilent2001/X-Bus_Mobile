@@ -1,22 +1,52 @@
 import CustomButton from "@/components/customButton";
-import {Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, Text, TouchableWithoutFeedback, View} from "react-native";
+import {
+    Image,
+    Keyboard,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    Text,
+    TouchableWithoutFeedback,
+    View
+} from "react-native";
 import {router} from "expo-router";
-import {icons, images} from "@/constants";
-import InputField from "@/components/inputField";
-import {useState} from "react";
+import {images} from "@/constants";
+import {useEffect, useState} from "react";
 import PasswordField from "@/components/passwordField";
+import axios from "axios";
+import {API_URL} from "@/constants/api";
+import {useAuthStore} from "@/store/authStore";
 
 const ResetPassword = () => {
     const [form, setForm] = useState({
         password: '',
         confirmPassword: ''
-    })
+    });
+    const {checkAuth, email} = useAuthStore();
 
-    const onSignUpPress = () => {
-        router.push("/login")
+    useEffect(() => {
+        checkAuth();
+    }, []);
+
+    const onSignUpPress = async () => {
+        try {
+            const response = await axios.post(`${API_URL}/auth/reset-password/${email}`, {
+                password: form.password,
+                confirmPassword: form.confirmPassword
+            })
+
+            if (response.status === 200) {
+                alert("Password reset Successfully");
+            }
+
+            router.push("/login")
+        } catch (error) {
+            console.error("Password reset failed:", error);
+        }
     }
+
     return (
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{flex: 1}}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <ScrollView className="flex-1 bg-white" keyboardShouldPersistTaps="handled">
                     <View className="flex-1 bg-white">
