@@ -43,9 +43,9 @@ const Login = () => {
         const role = decodedToken.role;
 
         if (role === "passenger") {
-            router.push("/(root)/(tabs)/passenger/home")
+            router.push("/(tabs)/passenger/home")
         } else if (role === "operator") {
-            router.push("/(root)/(tabs)/operator/home")
+            router.push("/(tabs)/operator/home")
         } else {
             router.push("/+not-found")
         }
