@@ -1,14 +1,16 @@
-import CustomButton from "@/components/customButton";
 import {Text, View} from "react-native";
-import {router} from "expo-router";
-import {useAuthStore} from "@/store/authStore";
 import {useEffect, useState} from "react";
 import {getFormattedDate} from "@/util/formatDate";
 import {Ionicons, MaterialIcons} from "@expo/vector-icons";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import {getUserById} from "@/api/userAPI";
+import {User} from "@/types/type";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home = () => {
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
+    const [user, setUser] = useState<User | null>(null);
+    const userId = AsyncStorage.getItem("userId")
 
     useEffect(() => {
         const timer = setInterval(()=>{
@@ -18,17 +20,28 @@ const Home = () => {
         return () => clearInterval(timer);
     }, []);
 
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                if (userId) {
+                    const user = await getUserById(await userId);
+                    if (user) {
+                        setUser(user);
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
 
-    const onSignInPress = () =>{
-        router.push("/login")
-    }
+        fetchUserData();
+    }, [userId]);
 
-    const {user} = useAuthStore();
 
     return(
         <View className="m-5 bg-white">
             <Text className="text-xl font-bold">
-                Hi {user}
+                Hi {user?.name}
             </Text>
 
             <View className="mt-5">
@@ -44,13 +57,13 @@ const Home = () => {
                 <View className="w-full flex flex-row items-center gap-4">
                     <View className="w-52 h-40 bg-[#F7D8D4] rounded-3xl">
                         <View className="text-center m-auto gap-2">
-                            <Ionicons name="location-sharp" size={40} color="red" className="text-center m-auto"/>
+                            <Ionicons name="location-sharp" size={40} color="#78232A" className="text-center m-auto"/>
                             <Text className="text-lg font-bold text-center text-red-950">Live Location</Text>
                         </View>
                     </View>
                     <View className="w-52 h-40 bg-[#F7D8D4] rounded-3xl">
                         <View className="text-center m-auto gap-2">
-                            <Ionicons name="time-outline" size={40} color="red" className="text-center m-auto"/>
+                            <Ionicons name="time-outline" size={40} color="#78232A" className="text-center m-auto"/>
                             <Text className="text-lg font-bold text-center text-red-950">Bus Schedule</Text>
                         </View>
                     </View>
@@ -58,13 +71,13 @@ const Home = () => {
                 <View className="w-full flex flex-row items-center gap-4">
                     <View className="w-52 h-40 bg-[#F7D8D4] rounded-3xl">
                         <View className="text-center m-auto gap-2">
-                            <MaterialCommunityIcons name="seat-passenger" size={40} color="red" className="text-center m-auto"/>
+                            <MaterialCommunityIcons name="seat-passenger" size={40} color="#78232A" className="text-center m-auto"/>
                             <Text className="text-lg font-bold text-center text-red-950">Seat Reservation</Text>
                         </View>
                     </View>
                     <View className="w-52 h-40 bg-[#F7D8D4] rounded-3xl">
                         <View className="text-center m-auto gap-2">
-                            <Ionicons name="card" size={40} color="red" className="text-center m-auto"/>
+                            <Ionicons name="card" size={40} color="#78232A" className="text-center m-auto"/>
                             <Text className="text-lg font-bold text-center text-red-950">Online Payments</Text>
                         </View>
                     </View>
@@ -72,13 +85,13 @@ const Home = () => {
                 <View className="w-full flex flex-row items-center gap-4">
                     <View className="w-52 h-40 bg-[#F7D8D4] rounded-3xl">
                         <View className="text-center m-auto gap-2">
-                            <MaterialCommunityIcons name="briefcase-search" size={40} color="red" className="text-center m-auto"/>
+                            <MaterialCommunityIcons name="briefcase-search" size={40} color="#78232A" className="text-center m-auto"/>
                             <Text className="text-lg font-bold text-center text-red-950">Lost & Found</Text>
                         </View>
                     </View>
                     <View className="w-52 h-40 bg-[#F7D8D4] rounded-3xl">
                         <View className="text-center m-auto gap-2">
-                            <MaterialIcons name="feedback" size={40} color="red" className="text-center m-auto"/>
+                            <MaterialIcons name="feedback" size={40} color="#78232A" className="text-center m-auto"/>
                             <Text className="text-lg font-bold text-center text-red-950">Feedbacks</Text>
                         </View>
                     </View>
@@ -86,20 +99,12 @@ const Home = () => {
                 <View className="w-full flex flex-row items-center gap-4">
                     <View className="w-52 h-40 bg-[#F7D8D4] rounded-3xl">
                         <View className="text-center m-auto gap-2">
-                            <MaterialIcons name="attach-money" size={40} color="red" className="text-center m-auto"/>
+                            <MaterialIcons name="attach-money" size={40} color="#78232A" className="text-center m-auto"/>
                             <Text className="text-lg font-bold text-center text-red-950">Expenses</Text>
                         </View>
                     </View>
-                    <View className="w-52 h-40 bg-[#F7D8D4] rounded-3xl">
-                        <Text className="text-center m-auto">2</Text>
-                    </View>
                 </View>
             </View>
-
-            {/*<CustomButton*/}
-            {/*    title="Sign In"*/}
-            {/*    onPress={onSignInPress}*/}
-            {/*/>*/}
         </View>
     )
 }

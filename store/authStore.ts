@@ -72,10 +72,9 @@ export const useAuthStore = create<authType>((set) => ({
             const token = await AsyncStorage.getItem("token");
             const userJSON = await AsyncStorage.getItem("userId");
             const user = userJSON ? JSON.parse(userJSON) : null;
-            const email = await AsyncStorage.getItem("userEmail");
 
-            set({user, token, email});
-            console.log(email)
+            set({user, token});
+
         }catch (error:any){
             console.log("Auth Check Failed:", error);
         }
@@ -85,6 +84,6 @@ export const useAuthStore = create<authType>((set) => ({
         const token = await AsyncStorage.removeItem("token");
         const user = await AsyncStorage.removeItem("userId");
 
-        set({user: null, token: null})
+        set({user: null, token: null, email: null})
     }
 }));
