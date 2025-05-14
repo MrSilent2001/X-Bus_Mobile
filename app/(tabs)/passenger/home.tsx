@@ -1,10 +1,11 @@
-import {Text, View} from "react-native";
+import {Pressable, Text, View} from "react-native";
 import {getFormattedDate} from "@/util/formatDate";
 import {Ionicons, MaterialCommunityIcons, MaterialIcons} from "@expo/vector-icons";
 import {useEffect, useState} from "react";
 import {User} from "@/types/type";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {getUserById} from "@/api/userAPI";
+import {router} from "expo-router";
 
 const Home = () => {
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
@@ -55,44 +56,65 @@ const Home = () => {
             <View className="mt-10 gap-5">
                 <View className="w-full flex flex-row items-center gap-4">
                     <View className="w-52 h-40 bg-[#F7D8D4] rounded-3xl">
-                        <View className="text-center m-auto gap-2">
+                        <Pressable
+                            className="text-center m-auto gap-2"
+                            onPress={() => router.push("/(pages)/passenger/liveLocation")}
+
+                        >
                             <Ionicons name="location-sharp" size={40} color="#78232A" className="text-center m-auto"/>
                             <Text className="text-lg font-bold text-center text-red-950">Live Location</Text>
-                        </View>
+                        </Pressable>
                     </View>
                     <View className="w-52 h-40 bg-[#F7D8D4] rounded-3xl">
-                        <View className="text-center m-auto gap-2">
+                        <Pressable
+                            className="text-center m-auto gap-2"
+                            onPress={() => router.push("/(pages)/passenger/viewSchedule")}
+                        >
                             <Ionicons name="time-outline" size={40} color="#78232A" className="text-center m-auto"/>
                             <Text className="text-lg font-bold text-center text-red-950">Bus Schedule</Text>
-                        </View>
+                        </Pressable>
                     </View>
                 </View>
                 <View className="w-full flex flex-row items-center gap-4">
                     <View className="w-52 h-40 bg-[#F7D8D4] rounded-3xl">
-                        <View className="text-center m-auto gap-2">
+                        <Pressable
+                            className="text-center m-auto gap-2"
+                            onPress={() => router.push("/(pages)/passenger/seatAvailability")}
+
+                        >
                             <MaterialCommunityIcons name="seat-passenger" size={40} color="#78232A" className="text-center m-auto"/>
                             <Text className="text-lg font-bold text-center text-red-950">Seat Reservation</Text>
-                        </View>
+                        </Pressable>
                     </View>
                     <View className="w-52 h-40 bg-[#F7D8D4] rounded-3xl">
-                        <View className="text-center m-auto gap-2">
+                        <Pressable
+                            className="text-center m-auto gap-2"
+                            onPress={() => router.push("/(pages)/passenger/onlinePayment")}
+
+                        >
                             <Ionicons name="card" size={40} color="#78232A" className="text-center m-auto"/>
                             <Text className="text-lg font-bold text-center text-red-950">Online Payments</Text>
-                        </View>
+                        </Pressable>
                     </View>
                 </View>
                 <View className="w-full flex flex-row items-center gap-4">
                     <View className="w-52 h-40 bg-[#F7D8D4] rounded-3xl">
-                        <View className="text-center m-auto gap-2">
+                        <Pressable
+                            className="text-center m-auto gap-2"
+                            onPress={() => router.push("/(pages)/passenger/lostnfound")}
+                        >
                             <MaterialCommunityIcons name="briefcase-search" size={40} color="#78232A" className="text-center m-auto"/>
                             <Text className="text-lg font-bold text-center text-red-950">Lost & Found</Text>
-                        </View>
+                        </Pressable>
                     </View>
                     <View className="w-52 h-40 bg-[#F7D8D4] rounded-3xl">
-                        <View className="text-center m-auto gap-2">
+                        <Pressable
+                            className="text-center m-auto gap-2"
+                            onPress={() => router.push("/(pages)/passenger/createFeedback")}
+                        >
                             <MaterialIcons name="feedback" size={40} color="#78232A" className="text-center m-auto"/>
                             <Text className="text-lg font-bold text-center text-red-950">Feedbacks</Text>
-                        </View>
+                        </Pressable>
                     </View>
                 </View>
             </View>
