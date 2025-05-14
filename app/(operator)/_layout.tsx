@@ -2,7 +2,7 @@ import {Tabs} from 'expo-router';
 import {Ionicons} from "@expo/vector-icons";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 
-const PassengerLayout = () => {
+const OperatorLayout = () => {
     const insets = useSafeAreaInsets();
 
     return (
@@ -26,7 +26,7 @@ const PassengerLayout = () => {
             }}
         >
             <Tabs.Screen
-                name="home"
+                name="(tabs)/home"
                 options={{
                     title: 'Home',
                     tabBarIcon: ({color, size}) =>
@@ -34,7 +34,7 @@ const PassengerLayout = () => {
                 }}
             />
             <Tabs.Screen
-                name="reservation"
+                name="(tabs)/reservation"
                 options={{
                     title: 'Reservations',
                     tabBarIcon: ({color, size}) =>
@@ -42,7 +42,7 @@ const PassengerLayout = () => {
                 }}
             />
             <Tabs.Screen
-                name="payments"
+                name="(tabs)/payments"
                 options={{
                     title: 'Payments',
                     tabBarIcon: ({color, size}) =>
@@ -50,15 +50,21 @@ const PassengerLayout = () => {
                 }}
             />
             <Tabs.Screen
-                name="profile"
+                name="(tabs)/profile"
                 options={{
                     title: 'Profile',
                     tabBarIcon: ({color, size}) =>
                         <Ionicons name="person-outline" size={size} color={color}/>
                 }}
             />
+            <Tabs.Screen
+                name="(pages)/createSchedule"
+                options={{
+                    href: null
+                }}
+            />
         </Tabs>
     );
 }
 
-export default PassengerLayout;
+export default OperatorLayout;

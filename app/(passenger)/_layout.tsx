@@ -26,7 +26,7 @@ const PassengerLayout = () => {
             }}
         >
             <Tabs.Screen
-                name="home"
+                name="(tabs)/home"
                 options={{
                     title: 'Home',
                     tabBarIcon: ({color, size}) =>
@@ -34,7 +34,7 @@ const PassengerLayout = () => {
                 }}
             />
             <Tabs.Screen
-                name="reservation"
+                name="(tabs)/reservation"
                 options={{
                     title: 'Reservations',
                     tabBarIcon: ({color, size}) =>
@@ -42,7 +42,7 @@ const PassengerLayout = () => {
                 }}
             />
             <Tabs.Screen
-                name="payments"
+                name="(tabs)/payments"
                 options={{
                     title: 'Payments',
                     tabBarIcon: ({color, size}) =>
@@ -50,11 +50,47 @@ const PassengerLayout = () => {
                 }}
             />
             <Tabs.Screen
-                name="profile"
+                name="(tabs)/profile"
                 options={{
                     title: 'Profile',
                     tabBarIcon: ({color, size}) =>
                         <Ionicons name="person-outline" size={size} color={color}/>
+                }}
+            />
+            <Tabs.Screen
+                name="(pages)/liveLocation"
+                options={{
+                    href: null
+                }}
+            />
+            <Tabs.Screen
+                name="(pages)/createFeedback"
+                options={{
+                    href: null
+                }}
+            />
+            <Tabs.Screen
+                name="(pages)/lostnfound"
+                options={{
+                    href: null
+                }}
+            />
+            <Tabs.Screen
+                name="(pages)/onlinePayment"
+                options={{
+                    href: null
+                }}
+            />
+            <Tabs.Screen
+                name="(pages)/seatAvailability"
+                options={{
+                    href: null
+                }}
+            />
+            <Tabs.Screen
+                name="(pages)/viewSchedule"
+                options={{
+                    href: null
                 }}
             />
         </Tabs>
