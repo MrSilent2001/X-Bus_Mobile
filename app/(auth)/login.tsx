@@ -11,7 +11,7 @@ import {Alert} from "react-native";
 import {parseJwt} from "@/util/parseJwt";
 
 interface User{
-    email: string;
+    identifier: string;
     password: string;
 }
 
@@ -20,7 +20,7 @@ const Login = () => {
 
     const {user, isLoading,token,checkAuth, login} = useAuthStore();
     const [form, setForm] = useState<User>({
-        email: '',
+        identifier: '',
         password: ''
     });
 
@@ -70,13 +70,13 @@ const Login = () => {
 
                             <View className="p-5">
                                 <View className="mt-3">
-                                    <Text className="text-lg font-JakartaSemiBold">Email</Text>
+                                    <Text className="text-lg font-JakartaSemiBold">Email/Reg.No</Text>
                                     <InputField
                                         label="Email"
                                         placeholder="Enter your email"
                                         icon="mail-outline"
-                                        value={form.email}
-                                        onChangeText={(value) => setForm({...form, email: value})}
+                                        value={form.identifier}
+                                        onChangeText={(value) => setForm({...form, identifier: value})}
                                         keyboardType="email-address"
                                     />
                                 </View>

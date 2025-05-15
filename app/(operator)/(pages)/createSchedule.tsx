@@ -1,55 +1,38 @@
-import {View, Text, Pressable} from 'react-native';
+import {View, Text, Pressable, ScrollView} from 'react-native';
 import DatePickerField from '@/components/datepicker';
 import React, {useEffect, useState} from 'react';
-import DropdownMenu from '@/components/dropdown';
-import {getBusRoutes} from "@/api/busAPI";
+import {getBusById} from "@/api/busAPI";
 import {Ionicons} from "@expo/vector-icons";
-import {getAllBusSchedules} from "@/api/busScheduleAPI";
+import {addNewSchedule, getSchedulesByBusId} from "@/api/busScheduleAPI";
+import TimePickerField from "@/components/timepicker";
+import CustomButton from "@/components/customButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {Bus, BusSchedule} from "@/types/type";
 
-interface BusSchedule {
-    id: number;
-    date: string;
-    scheduledTime: string;
-    regNo: string;
-    seatingCapacity: number;
-    route: string;
-    routeNo: string;
-}
 const CreateSchedule = () => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-    const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [options, setOptions] = useState<{ label: string; value: string }[]>([]);
+    const [selectedTime, setSelectedTime] = useState<Date | null>(null);
     const [schedule, setSchedule] = useState<BusSchedule[]>([]);
+    const [userId, setUserId] = useState<string | null>(null);
+    const [bus, setBus] = useState<Bus | null>(null);
+
 
     useEffect(() => {
-        const fetchRoutes = async () => {
-            try {
-                const routes = await getBusRoutes();
-                if (routes && routes.length > 0) {
-                    const formattedRoutes = routes.map((route: string) => ({
-                        label: route,
-                        value: route,
-                    }));
-                    setOptions(formattedRoutes);
-                }
-            } catch (error) {
-                console.log(error);
-            }
+        const fetchUserId = async () => {
+            const storedUserId = await AsyncStorage.getItem("userId");
+            setUserId(storedUserId);
         };
-
-        fetchRoutes();
+        fetchUserId();
     }, []);
 
     useEffect(() => {
-        if (!selectedDate && !selectedRoute) return;
+        if (!userId) {
+            return;
+        }
 
         const fetchSchedules = async () => {
             try {
-                const dateParam = selectedDate ? selectedDate.toISOString().split('T')[0] : '';
-                const routeParam = selectedRoute || '';
-
-                const schedules = await getAllBusSchedules(dateParam, routeParam);
+                const schedules = await getSchedulesByBusId(userId);
                 setSchedule(schedules || []);
             } catch (error) {
                 console.log("Error fetching schedules:", error);
@@ -57,7 +40,49 @@ const CreateSchedule = () => {
         };
 
         fetchSchedules();
-    }, [selectedDate, selectedRoute]);
+    }, [userId]);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                if (userId) {
+                    const bus = await getBusById(await userId);
+                    if (bus) {
+                        setBus(bus);
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        fetchUserData();
+    }, [userId]);
+
+
+    const handleCreateSchedule = async () => {
+        const formattedDate = selectedDate ? selectedDate.toISOString().split('T')[0] : 'No date';
+        const formattedTime = selectedTime
+            ? `${selectedTime.getHours()}:${selectedTime.getMinutes().toString().padStart(2, '0')}`
+            : 'No time';
+
+        const data: BusSchedule = {
+            busId: bus!.id,
+            date: formattedDate,
+            scheduledTime: formattedTime,
+            seatingCapacity: bus?.seatingCapacity || 0,
+        };
+
+        try {
+            await addNewSchedule(data);
+            if (userId) {
+                const updatedSchedules = await getSchedulesByBusId(userId);
+                setSchedule(updatedSchedules || []);
+            }
+        } catch (error) {
+            console.log("Error creating schedule:", error);
+        }
+    };
 
 
     return (
@@ -72,20 +97,22 @@ const CreateSchedule = () => {
                 />
             </View>
 
-            <View className="mx-5 my-2" style={{ zIndex: 2000 }}>
-                <Text className="ml-3 my-2">Route</Text>
-                <DropdownMenu
-                    placeholder="Select a route"
-                    options={options}
-                    selectedValue={selectedRoute}
-                    onSelect={(value) => setSelectedRoute(value)}
-                    zIndex={2000}
-                    open={dropdownOpen}
-                    setOpen={setDropdownOpen}
+            <View className="mx-5 my-2">
+                <Text className="ml-3">Time</Text>
+                <TimePickerField
+                    time={selectedTime}
+                    setTime={setSelectedTime}
                 />
             </View>
 
-            <View className="mx-5 mt-10 gap-3">
+            <View className="mx-5 my-2">
+                <CustomButton
+                    title="+ Add Schedule"
+                    onPress={handleCreateSchedule}
+                />
+            </View>
+
+            <ScrollView className="mx-5 mt-10 gap-3">
                 {schedule.length > 0 ? (
                     schedule.map((item, index) => (
                         <View key={index} className="w-full h-40 bg-[#F7D8D4] rounded-3xl mb-3">
@@ -100,9 +127,9 @@ const CreateSchedule = () => {
                                         <Text className="text-lg font-bold text-red-950">{item.route}</Text>
                                     </View>
 
-                                    <View className="flex flex-row justify-evenly gap-8">
+                                    <View className="flex flex-row justify-center gap-8 mx-3">
+                                        <Text className="text-lg font-bold text-red-950">{item.date.split('T')[0]}</Text>
                                         <Text className="text-lg font-bold text-red-950">{item.scheduledTime}</Text>
-                                        <Text className="text-lg font-bold text-red-950">{item.regNo}</Text>
                                     </View>
 
                                     <View className="flex flex-row justify-center gap-8">
@@ -116,7 +143,7 @@ const CreateSchedule = () => {
                     <Text className="text-center text-lg text-gray-500">No schedules available</Text>
                 )}
 
-            </View>
+            </ScrollView>
         </View>
     );
 };
