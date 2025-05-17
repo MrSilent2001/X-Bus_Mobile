@@ -1,5 +1,4 @@
 import {TextInputProps, TouchableOpacityProps} from "react-native";
-import {a} from "@clerk/clerk-react/dist/useAuth-Do-ds1OD";
 
 //====================================Auth============================================
 interface AuthResponse {
@@ -34,6 +33,30 @@ interface authType{
     checkAuth: () => void
     logout: () => void
 }
+
+interface Bus{
+    id: number;
+    regNo?: string;
+    ownerId: string;
+    fleetName: string;
+    routeNo?: string;
+    route?: string;
+    seatingCapacity?: number;
+    busFare: string;
+    password: string;
+    profilePicture: string;
+}
+interface BusSchedule {
+    id?: number;
+    date: string;
+    scheduledTime: string;
+    regNo?: string;
+    seatingCapacity: number;
+    route?: string;
+    routeNo?: string;
+    busId: number;
+}
+
 
 declare interface Driver {
     driver_id: number;

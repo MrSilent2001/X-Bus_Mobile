@@ -70,7 +70,7 @@ const Login = () => {
 
                             <View className="p-5">
                                 <View className="mt-3">
-                                    <Text className="text-lg font-JakartaSemiBold">Email</Text>
+                                    <Text className="text-lg font-JakartaSemiBold">Email/Reg.No</Text>
                                     <InputField
                                         label="Email"
                                         placeholder="Enter your email"

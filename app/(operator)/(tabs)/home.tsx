@@ -3,15 +3,15 @@ import {useEffect, useState} from "react";
 import {getFormattedDate} from "@/util/formatDate";
 import {Ionicons, MaterialIcons} from "@expo/vector-icons";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import {getUserById} from "@/api/userAPI";
-import {User} from "@/types/type";
+import {Bus } from "@/types/type";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {router} from "expo-router";
+import {getBusById} from "@/api/busAPI";
 
 const Home = () => {
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
-    const [user, setUser] = useState<User | null>(null);
-    const userId = AsyncStorage.getItem("userId")
+    const [bus, setBus] = useState<Bus | null>(null);
+    const userId = AsyncStorage.getItem("userId");
 
     useEffect(() => {
         const timer = setInterval(()=>{
@@ -25,9 +25,9 @@ const Home = () => {
         const fetchUserData = async () => {
             try {
                 if (userId) {
-                    const user = await getUserById(await userId);
-                    if (user) {
-                        setUser(user);
+                    const bus = await getBusById(await userId);
+                    if (bus) {
+                        setBus(bus);
                     }
                 }
             } catch (error) {
@@ -38,11 +38,10 @@ const Home = () => {
         fetchUserData();
     }, [userId]);
 
-
     return(
         <View className="m-5 bg-white">
             <Text className="text-xl font-bold">
-                Hi {user?.name}
+                Hi {bus?.regNo}
             </Text>
 
             <View className="mt-5">
