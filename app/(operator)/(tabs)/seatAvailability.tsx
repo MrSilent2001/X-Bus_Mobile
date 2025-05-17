@@ -1,24 +1,32 @@
 import {View, Text, ScrollView} from "react-native";
-import {SeatMap} from "@/components/seatMap";
-import DatePickerField from "@/components/datepicker";
-import DropdownMenu from "@/components/dropdown";
 import React, {useEffect, useState} from "react";
 import {getBusRoutes} from "@/api/busAPI";
-import CustomButton from "@/components/customButton";
 import {getDailyRouteSchedules} from "@/api/busScheduleAPI";
 import {getReservedSeats} from "@/api/reservationAPI";
+import DatePickerField from "@/components/datepicker";
+import DropdownMenu from "@/components/dropdown";
+import {SeatMap} from "@/components/seatMap";
+import CustomButton from "@/components/customButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Reservation = () => {
+const SeatAvailability = () => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
     const [selectedSchedule, setSelectedSchedule] = useState<string | null>(null);
-    const [dropdownOpenRoute, setDropdownOpenRoute] = useState(false);
     const [dropdownOpenTime, setDropdownOpenTime] = useState(false);
     const [routes, setRoutes] = useState<{ label: string; value: string }[]>([]);
     const [schedules, setSchedules] = useState<{ label: string; value: string }[]>([]);
     const [occupiedSeats, setOccupiedSeats] = useState<number[]>([]);
     const [busFare, setBusFare] = useState<number | null>(null);
+    const [bus, setBus] = useState<any>(null);
 
+    useEffect(() => {
+        const user = AsyncStorage.getItem("userId");
+        const fetchBusDetails = async() =>{
+
+        }
+
+    }, []);
 
     useEffect(() => {
         const fetchRoutes = async () => {
@@ -57,11 +65,11 @@ const Reservation = () => {
         };
 
         fetchSchedules();
-    }, [selectedDate, selectedRoute]);
+    }, [selectedDate]);
 
 
     useEffect(() => {
-        if (!selectedDate || !selectedRoute || !selectedSchedule) return;
+        if (!selectedDate ||!selectedSchedule) return;
 
         const formattedDate = selectedDate ? selectedDate.toISOString().split('T')[0] : 'No date';
 
@@ -81,7 +89,7 @@ const Reservation = () => {
         }
 
         fetchOccupiedSeats();
-    }, [selectedDate, selectedRoute, selectedSchedule]);
+    }, [selectedDate,selectedSchedule]);
 
     const handleSeatPress = (seatNumber: number) => {
         console.log(`Seat ${seatNumber} selected`);
@@ -103,19 +111,6 @@ const Reservation = () => {
                             setDate={setSelectedDate}
                             placeholder="Pick your date"
                             mode="date"
-                        />
-                    </View>
-
-                    <View className="mx-5 my-2" style={{ zIndex: 3000 }}>
-                        <Text className="ml-3">Route</Text>
-                        <DropdownMenu
-                            placeholder="Select the route"
-                            options={routes}
-                            selectedValue={selectedRoute}
-                            onSelect={(value) => setSelectedRoute(value)}
-                            zIndex={2000}
-                            open={dropdownOpenRoute}
-                            setOpen={setDropdownOpenRoute}
                         />
                     </View>
 
@@ -144,7 +139,7 @@ const Reservation = () => {
                         seatCount={50}
                         occupiedSeats={occupiedSeats}
                         onSeatPress={handleSeatPress}
-                        editable={true}
+                        editable={false}
                     />
 
                     <Text className="text-xl font-bold mx-7">Bus Fare - LKR {busFare}.00</Text>
@@ -161,4 +156,4 @@ const Reservation = () => {
     );
 }
 
-export default Reservation;
+export default SeatAvailability;

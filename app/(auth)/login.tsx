@@ -11,16 +11,16 @@ import {Alert} from "react-native";
 import {parseJwt} from "@/util/parseJwt";
 
 interface User{
-    email: string;
+    identifier: string;
     password: string;
 }
 
 const Login = () => {
-    const router = useRouter()
+    const router = useRouter();
 
     const {user, isLoading,token,checkAuth, login} = useAuthStore();
     const [form, setForm] = useState<User>({
-        email: '',
+        identifier: '',
         password: ''
     });
 
@@ -75,8 +75,8 @@ const Login = () => {
                                         label="Email"
                                         placeholder="Enter your email"
                                         icon="mail-outline"
-                                        value={form.email}
-                                        onChangeText={(value) => setForm({...form, email: value})}
+                                        value={form.identifier}
+                                        onChangeText={(value) => setForm({...form, identifier: value})}
                                         keyboardType="email-address"
                                     />
                                 </View>

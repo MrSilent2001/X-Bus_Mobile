@@ -34,9 +34,9 @@ const OperatorLayout = () => {
                 }}
             />
             <Tabs.Screen
-                name="(tabs)/reservation"
+                name="(tabs)/seatAvailability"
                 options={{
-                    title: 'Reservations',
+                    title: 'Seat Availability',
                     tabBarIcon: ({color, size}) =>
                         <Ionicons name="bookmark-outline" size={size} color={color}/>
                 }}

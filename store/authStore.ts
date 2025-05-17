@@ -15,7 +15,7 @@ export const useAuthStore = create<authType>((set) => ({
 
         try {
             const response = await axios.post(`${API_URL}/auth/login`, {
-                email: payload.email,
+                identifier: payload.identifier,
                 password: payload.password
             });
 
