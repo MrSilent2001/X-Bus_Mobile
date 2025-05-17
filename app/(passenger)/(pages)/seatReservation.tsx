@@ -1,47 +1,49 @@
 import {View, Text, ScrollView} from "react-native";
-import React, {useEffect, useState} from "react";
-import {getBusById, getBusRoutes} from "@/api/busAPI";
-import {getDailyRouteSchedules} from "@/api/busScheduleAPI";
-import {getReservedSeats} from "@/api/reservationAPI";
+import {SeatMap} from "@/components/seatMap";
 import DatePickerField from "@/components/datepicker";
 import DropdownMenu from "@/components/dropdown";
-import {SeatMap} from "@/components/seatMap";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, {useEffect, useState} from "react";
+import {getBusRoutes} from "@/api/busAPI";
+import CustomButton from "@/components/customButton";
+import {getDailyRouteSchedules} from "@/api/busScheduleAPI";
+import {getReservedSeats} from "@/api/reservationAPI";
 
-const SeatAvailability = () => {
+const SeatReservation = () => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
     const [selectedSchedule, setSelectedSchedule] = useState<string | null>(null);
+    const [dropdownOpenRoute, setDropdownOpenRoute] = useState(false);
     const [dropdownOpenTime, setDropdownOpenTime] = useState(false);
+    const [routes, setRoutes] = useState<{ label: string; value: string }[]>([]);
     const [schedules, setSchedules] = useState<{ label: string; value: string }[]>([]);
     const [occupiedSeats, setOccupiedSeats] = useState<number[]>([]);
-    const [occupiedSeatCount, setOccupiedSeatCount] = useState(0);
-    const [bus, setBus] = useState<any>(null);
+    const [busFare, setBusFare] = useState<number | null>(null);
+
 
     useEffect(() => {
-        const fetchBusDetails = async() =>{
+        const fetchRoutes = async () => {
             try {
-                const userId = await AsyncStorage.getItem("userId");
-                if (!userId) {
-                    console.log("No userId found");
-                    return;
+                const routes = await getBusRoutes();
+                if (routes && routes.length > 0) {
+                    const formattedRoutes = routes.map((route: string) => ({
+                        label: route,
+                        value: route,
+                    }));
+                    setRoutes(formattedRoutes);
                 }
-
-                const response = await getBusById(userId);
-                setBus(response);
             } catch (error) {
-                console.error("Failed to fetch bus details:", error);
+                console.log(error);
             }
-        }
+        };
 
-        fetchBusDetails();
+        fetchRoutes();
     }, []);
 
-
     useEffect(() => {
-        if (!selectedDate) return;
+        if (!selectedDate || !selectedRoute) return;
         const fetchSchedules = async () => {
             try {
-                const schedules = await getDailyRouteSchedules(selectedDate, bus.route);
+                const schedules = await getDailyRouteSchedules(selectedDate, selectedRoute);
                 if (schedules && schedules.length > 0) {
                     const formattedSchedules = schedules.map((schedule: any) => ({
                         label: schedule.scheduledTime,
@@ -55,11 +57,11 @@ const SeatAvailability = () => {
         };
 
         fetchSchedules();
-    }, [selectedDate]);
+    }, [selectedDate, selectedRoute]);
 
 
     useEffect(() => {
-        if (!selectedDate ||!selectedSchedule) return;
+        if (!selectedDate || !selectedRoute || !selectedSchedule) return;
 
         const formattedDate = selectedDate ? selectedDate.toISOString().split('T')[0] : 'No date';
 
@@ -67,15 +69,27 @@ const SeatAvailability = () => {
             try {
                 const response = await getReservedSeats(formattedDate,selectedSchedule);
                 setOccupiedSeats(response.map((res: { seatNo: number; }) => res.seatNo));
-                setOccupiedSeatCount(response.length);
+
+                if (response.length > 0) {
+                    setBusFare(response[0].busFare);
+                } else {
+                    setBusFare(0);
+                }
             }catch (error){
                 console.log(error)
             }
         }
 
         fetchOccupiedSeats();
-    }, [selectedDate,selectedSchedule]);
+    }, [selectedDate, selectedRoute, selectedSchedule]);
 
+    const handleSeatPress = (seatNumber: number) => {
+        console.log(`Seat ${seatNumber} selected`);
+    };
+
+    const handleReservation = () => {
+        console.log("reserved");
+    }
 
     return(
         <ScrollView>
@@ -92,7 +106,20 @@ const SeatAvailability = () => {
                         />
                     </View>
 
-                    {selectedDate && (
+                    <View className="mx-5 my-2" style={{ zIndex: 3000 }}>
+                        <Text className="ml-3">Route</Text>
+                        <DropdownMenu
+                            placeholder="Select the route"
+                            options={routes}
+                            selectedValue={selectedRoute}
+                            onSelect={(value) => setSelectedRoute(value)}
+                            zIndex={2000}
+                            open={dropdownOpenRoute}
+                            setOpen={setDropdownOpenRoute}
+                        />
+                    </View>
+
+                    {selectedDate && selectedRoute && (
                         <View className="mx-5 my-2" style={{ zIndex: 2000 }}>
                             <Text className="ml-3 my-2">Time</Text>
                             <DropdownMenu
@@ -110,24 +137,28 @@ const SeatAvailability = () => {
             </View>
 
             {selectedSchedule && (
-                <View className="mx-7 my-5">
+                <View className="mx-7 my-3">
                     <Text className="text-xl font-bold">Seat Allocation</Text>
 
                     <SeatMap
                         seatCount={50}
                         occupiedSeats={occupiedSeats}
-                        editable={false}
+                        onSeatPress={handleSeatPress}
+                        editable={true}
                     />
 
-                    <View className="flex justify-center items-center my-5">
-                        <Text className="text-xl font-bold mx-7">Total Occupied - {occupiedSeatCount}</Text>
-                        <Text className="text-xl font-bold mx-7">Total Remaining - {bus.seatingCapacity - occupiedSeatCount}</Text>
-                    </View>
+                    <Text className="text-xl font-bold mx-7">Bus Fare - LKR {busFare}.00</Text>
 
+                    <View className="my-5">
+                        <CustomButton
+                            title="Confirm SeatAvailability"
+                            onPress={handleReservation}
+                        />
+                    </View>
                 </View>
             )}
         </ScrollView>
     );
 }
 
-export default SeatAvailability;
+export default SeatReservation;

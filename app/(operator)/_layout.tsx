@@ -1,6 +1,7 @@
-import {Tabs} from 'expo-router';
-import {Ionicons} from "@expo/vector-icons";
+import {router, Tabs} from 'expo-router';
+import {Ionicons, MaterialCommunityIcons} from "@expo/vector-icons";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
+import { Pressable } from 'react-native';
 
 const OperatorLayout = () => {
     const insets = useSafeAreaInsets();
@@ -37,8 +38,14 @@ const OperatorLayout = () => {
                 name="(tabs)/seatAvailability"
                 options={{
                     title: 'Seat Availability',
+                    headerLeft: () => (
+                        <Pressable onPress={() => router.back()} style={{ marginLeft: 16 }}>
+                            <Ionicons name="arrow-back-outline"></Ionicons>
+                        </Pressable>
+                    ),
                     tabBarIcon: ({color, size}) =>
                         <Ionicons name="bookmark-outline" size={size} color={color}/>
+                        // <MaterialCommunityIcons name="seat-passenger" size={30} color="#aeabab" className="text-center m-auto"/>
                 }}
             />
             <Tabs.Screen

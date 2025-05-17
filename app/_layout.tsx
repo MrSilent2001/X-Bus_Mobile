@@ -25,8 +25,8 @@ const RootLayout = () => {
   return (
           <Stack>
               <Stack.Screen name="index" options={{ headerShown: false }} />
-              <Stack.Screen name="(passenger)" options={{ headerShown: true }} />
-              <Stack.Screen name="(operator)" options={{ headerShown: true }} />
+              <Stack.Screen name="(passenger)" options={{ headerShown: false }} />
+              <Stack.Screen name="(operator)" options={{ headerShown: false }} />
               <Stack.Screen name="(auth)" options={{ headerShown: false }} />
               <Stack.Screen name="+not-found" />
           </Stack>

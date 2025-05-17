@@ -1,162 +1,80 @@
 import {View, Text, ScrollView} from "react-native";
-import {SeatMap} from "@/components/seatMap";
-import DatePickerField from "@/components/datepicker";
-import DropdownMenu from "@/components/dropdown";
 import React, {useEffect, useState} from "react";
-import {getBusRoutes} from "@/api/busAPI";
-import CustomButton from "@/components/customButton";
-import {getDailyRouteSchedules} from "@/api/busScheduleAPI";
-import {getReservedSeats} from "@/api/reservationAPI";
+import {getReservationsByUserId} from "@/api/reservationAPI";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import ReusableCard from "@/components/reusableCard";
 
 const Reservation = () => {
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-    const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
-    const [selectedSchedule, setSelectedSchedule] = useState<string | null>(null);
-    const [dropdownOpenRoute, setDropdownOpenRoute] = useState(false);
-    const [dropdownOpenTime, setDropdownOpenTime] = useState(false);
-    const [routes, setRoutes] = useState<{ label: string; value: string }[]>([]);
-    const [schedules, setSchedules] = useState<{ label: string; value: string }[]>([]);
-    const [occupiedSeats, setOccupiedSeats] = useState<number[]>([]);
-    const [busFare, setBusFare] = useState<number | null>(null);
-
+   const [reservations, setReservations] = useState<any[]>([]);
 
     useEffect(() => {
-        const fetchRoutes = async () => {
+        const fetReservations = async () => {
             try {
-                const routes = await getBusRoutes();
-                if (routes && routes.length > 0) {
-                    const formattedRoutes = routes.map((route: string) => ({
-                        label: route,
-                        value: route,
-                    }));
-                    setRoutes(formattedRoutes);
+                const userId = await AsyncStorage.getItem("userId");
+                if (!userId) {
+                    console.log("No userId found");
+                    return;
                 }
+
+                const response = await getReservationsByUserId(userId);
+                setReservations(response);
+
             } catch (error) {
                 console.log(error);
             }
         };
 
-        fetchRoutes();
+        fetReservations();
     }, []);
 
-    useEffect(() => {
-        if (!selectedDate || !selectedRoute) return;
-        const fetchSchedules = async () => {
-            try {
-                const schedules = await getDailyRouteSchedules(selectedDate, selectedRoute);
-                if (schedules && schedules.length > 0) {
-                    const formattedSchedules = schedules.map((schedule: any) => ({
-                        label: schedule.scheduledTime,
-                        value: schedule.id.toString(),
-                    }));
-                    setSchedules(formattedSchedules);
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        };
+    const todayDate = new Date().toISOString().slice(0, 10);
 
-        fetchSchedules();
-    }, [selectedDate, selectedRoute]);
-
-
-    useEffect(() => {
-        if (!selectedDate || !selectedRoute || !selectedSchedule) return;
-
-        const formattedDate = selectedDate ? selectedDate.toISOString().split('T')[0] : 'No date';
-
-        const fetchOccupiedSeats = async() =>{
-            try {
-                const response = await getReservedSeats(formattedDate,selectedSchedule);
-                setOccupiedSeats(response.map((res: { seatNo: number; }) => res.seatNo));
-
-                if (response.length > 0) {
-                    setBusFare(response[0].busFare);
-                } else {
-                    setBusFare(0);
-                }
-            }catch (error){
-                console.log(error)
-            }
-        }
-
-        fetchOccupiedSeats();
-    }, [selectedDate, selectedRoute, selectedSchedule]);
-
-    const handleSeatPress = (seatNumber: number) => {
-        console.log(`Seat ${seatNumber} selected`);
-    };
-
-    const handleReservation = () => {
-        console.log("reserved");
-    }
+    const todayReservations = reservations.filter(
+        (r) => r.reservationDate === todayDate
+    );
+    const upcomingReservations = reservations.filter(
+        (r) => r.reservationDate > todayDate
+    );
+    const previousReservations = reservations.filter(
+        (r) => r.reservationDate < todayDate
+    );
 
     return(
         <ScrollView>
             <View>
-                <Text className="text-2xl text-center font-bold mt-5"> Seat Availability </Text>
-                <View>
+                <Text className="text-2xl text-center font-bold mt-5"> My Reservations </Text>
+                <View className="my-5">
                     <View className="mx-5 my-2">
-                        <Text className="ml-3">Date</Text>
-                        <DatePickerField
-                            date={selectedDate}
-                            setDate={setSelectedDate}
-                            placeholder="Pick your date"
-                            mode="date"
-                        />
+                        <Text className="text-lg font-bold ml-3 mb-3">Today</Text>
+                        <View>
+                            {todayReservations.map((item, index) => (
+                                <ReusableCard key={index} item={item} />
+                            ))}
+                        </View>
                     </View>
 
                     <View className="mx-5 my-2" style={{ zIndex: 3000 }}>
-                        <Text className="ml-3">Route</Text>
-                        <DropdownMenu
-                            placeholder="Select the route"
-                            options={routes}
-                            selectedValue={selectedRoute}
-                            onSelect={(value) => setSelectedRoute(value)}
-                            zIndex={2000}
-                            open={dropdownOpenRoute}
-                            setOpen={setDropdownOpenRoute}
-                        />
+                        <Text className="text-lg font-bold ml-3 mb-3">Upcoming Trips</Text>
+                        <ScrollView className="h-100">
+                            {upcomingReservations.map((item, index) => (
+                                <ReusableCard key={index} item={item} />
+                            ))}
+                        </ScrollView>
                     </View>
 
-                    {selectedDate && selectedRoute && (
-                        <View className="mx-5 my-2" style={{ zIndex: 2000 }}>
-                            <Text className="ml-3 my-2">Time</Text>
-                            <DropdownMenu
-                                placeholder="Select the time"
-                                options={schedules}
-                                selectedValue={selectedSchedule}
-                                onSelect={(value) => setSelectedSchedule(value)}
-                                zIndex={2000}
-                                open={dropdownOpenTime}
-                                setOpen={setDropdownOpenTime}
-                            />
-                        </View>
-                    )}
+                    <View className="mx-5 my-2" style={{ zIndex: 3000 }}>
+                        <Text className="text-lg font-bold ml-3 mb-3">Previous Trips</Text>
+                        <ScrollView className="h-100">
+                            {previousReservations.map((item, index) => (
+                                <ReusableCard key={index} item={item} />
+                            ))}
+                        </ScrollView>
+                    </View>
+
                 </View>
             </View>
 
-            {selectedSchedule && (
-                <View className="mx-7 my-3">
-                    <Text className="text-xl font-bold">Seat Allocation</Text>
 
-                    <SeatMap
-                        seatCount={50}
-                        occupiedSeats={occupiedSeats}
-                        onSeatPress={handleSeatPress}
-                        editable={true}
-                    />
-
-                    <Text className="text-xl font-bold mx-7">Bus Fare - LKR {busFare}.00</Text>
-
-                    <View className="my-5">
-                        <CustomButton
-                            title="Confirm SeatAvailability"
-                            onPress={handleReservation}
-                        />
-                    </View>
-                </View>
-            )}
         </ScrollView>
     );
 }

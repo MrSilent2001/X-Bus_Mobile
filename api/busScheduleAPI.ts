@@ -1,6 +1,7 @@
 import axios from "axios";
 import {API_URL} from "@/constants/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {BusSchedule} from "@/types/type";
 
 export const getAllBusSchedules = async (date?: string, route?: string) => {
     try {

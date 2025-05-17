@@ -1,5 +1,5 @@
 import {Tabs} from 'expo-router';
-import {Ionicons} from "@expo/vector-icons";
+import {Ionicons, MaterialCommunityIcons} from "@expo/vector-icons";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 
 const PassengerLayout = () => {
@@ -39,6 +39,7 @@ const PassengerLayout = () => {
                     title: 'Reservations',
                     tabBarIcon: ({color, size}) =>
                         <Ionicons name="bookmark-outline" size={size} color={color}/>
+                        // <MaterialCommunityIcons name="seat-passenger" size={40} color="#78232A" className="text-center m-auto"/>
                 }}
             />
             <Tabs.Screen
@@ -89,6 +90,12 @@ const PassengerLayout = () => {
             />
             <Tabs.Screen
                 name="(pages)/viewSchedule"
+                options={{
+                    href: null
+                }}
+            />
+            <Tabs.Screen
+                name="(pages)/seatReservation"
                 options={{
                     href: null
                 }}

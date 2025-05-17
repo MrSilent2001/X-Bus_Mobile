@@ -79,7 +79,7 @@ const Home = () => {
                     <View className="w-52 h-40 bg-[#F7D8D4] rounded-3xl">
                         <Pressable
                             className="text-center m-auto gap-2"
-                            onPress={() => router.push("/(passenger)/(tabs)/reservation")}
+                            onPress={() => router.push("/(passenger)/(pages)/seatReservation")}
 
                         >
                             <MaterialCommunityIcons name="seat-passenger" size={40} color="#78232A" className="text-center m-auto"/>
