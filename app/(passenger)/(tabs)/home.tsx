@@ -101,7 +101,7 @@ const Home = () => {
                     <View className="w-52 h-40 bg-[#F7D8D4] rounded-3xl">
                         <Pressable
                             className="text-center m-auto gap-2"
-                            onPress={() => router.push("/(passenger)/(pages)/lostnfound")}
+                            onPress={() => router.push("/(shared)/lostnfoundHome")}
                         >
                             <MaterialCommunityIcons name="briefcase-search" size={40} color="#78232A" className="text-center m-auto"/>
                             <Text className="text-lg font-bold text-center text-red-950">Lost & Found</Text>

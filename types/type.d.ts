@@ -69,6 +69,14 @@ interface FeedbackResponse{
     time:string
 }
 
+interface LostnFoundData{
+    userName: string;
+    contactNo: string;
+    description?: string;
+    date: string;
+    time: string;
+    status: string;
+}
 declare interface Driver {
     driver_id: number;
     first_name: string;
@@ -78,6 +86,7 @@ declare interface Driver {
     car_seats: number;
     rating: number;
 }
+
 
 declare interface MarkerData {
     latitude: number;

@@ -1,7 +1,6 @@
 import axios from "axios";
 import {API_URL} from "@/constants/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {string} from "prop-types";
 
 export const addNewFeedback = async (data: {
     passengerName: string;

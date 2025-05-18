@@ -5,18 +5,10 @@ import DropdownMenu from "@/components/dropdown";
 import {getBusById} from "@/api/busAPI";
 import {getAllFeedbacks} from "@/api/feedbackAPI";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {dateOptions} from "@/constants/api";
 
 const ViewFeedback = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [options, setOptions] = useState<{ label: string; value: string }[]>([
-        { label: "Today", value: "Today" },
-        { label: "Yesterday", value: "Yesterday" },
-        { label: "This Week", value: "This Week" },
-        { label: "Last Week", value: "Last Week" },
-        { label: "This Month", value: "This Month" },
-        { label: "Last Month", value: "Last Month" },
-        { label: "All", value: "All" },
-    ]);
     const [filter, setFilter] = useState<string | null>(null);
     const [bus, setBus] = useState<Bus | null>(null);
     const [feedback, setFeedback] = useState<FeedbackResponse[]>([]);
@@ -60,7 +52,7 @@ const ViewFeedback = () => {
                 <Text className="text-lg font-JakartaSemiBold mx-2 mb-3">Filter</Text>
                 <DropdownMenu
                     placeholder="All"
-                    options={options}
+                    options={dateOptions}
                     selectedValue={filter}
                     onSelect={(value) => setFilter(value)}
                     zIndex={2000}

@@ -61,7 +61,7 @@ const CreateFeedback = () => {
         }
 
         try{
-            const response: any = await addNewFeedback(data);
+            const response: any = await addNewFeedback(formData, description, userId);
             if(response.status === 201) {
                 Alert.alert("Success", "Your feedback has been submitted successfully!");
 

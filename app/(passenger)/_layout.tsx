@@ -71,7 +71,25 @@ const PassengerLayout = () => {
                 }}
             />
             <Tabs.Screen
-                name="(pages)/lostnfound"
+                name="(pages)/lostnfoundHome"
+                options={{
+                    href: null
+                }}
+            />
+            <Tabs.Screen
+                name="(pages)/lostItems"
+                options={{
+                    href: null
+                }}
+            />
+            <Tabs.Screen
+                name="(pages)/foundItems"
+                options={{
+                    href: null
+                }}
+            />
+            <Tabs.Screen
+                name="(pages)/addLostnFoundItems"
                 options={{
                     href: null
                 }}
