@@ -38,3 +38,21 @@ export const getBusRoutes = async () => {
         console.log(error);
     }
 }
+
+
+export const getBusRegNo = async () => {
+    try {
+        const token = await AsyncStorage.getItem("token");
+        const response = await axios.get(`${API_URL}/bus/getBusRegNo`,{
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        if (response.status === 200) {
+            return response.data;
+        }
+    }catch(error) {
+        console.log(error);
+    }
+}

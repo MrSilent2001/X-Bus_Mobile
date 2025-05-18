@@ -57,6 +57,17 @@ interface BusSchedule {
     busId: number;
 }
 
+interface Feedback {
+    passengerName: string;
+    message: string;
+}
+
+interface FeedbackResponse{
+    passengerName: string;
+    message: string;
+    createdAt: string;
+    time:string
+}
 
 declare interface Driver {
     driver_id: number;

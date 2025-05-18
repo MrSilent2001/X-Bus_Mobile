@@ -70,6 +70,12 @@ const OperatorLayout = () => {
                     href: null
                 }}
             />
+            <Tabs.Screen
+                name="(pages)/viewFeedbacks"
+                options={{
+                    href: null
+                }}
+            />
         </Tabs>
     );
 }
