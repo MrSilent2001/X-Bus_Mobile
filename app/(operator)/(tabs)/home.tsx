@@ -58,7 +58,7 @@ const Home = () => {
                     <View className="w-52 h-40 bg-[#F7D8D4] rounded-3xl">
                         <Pressable
                             className="text-center m-auto gap-2"
-                            onPress={() => router.push("/(passenger)/(pages)/liveLocation")}
+                            onPress={() => router.push("/(operator)/(pages)/liveLocation")}
 
                         >
                             <Ionicons name="location-sharp" size={40} color="#78232A" className="text-center m-auto"/>
@@ -89,7 +89,7 @@ const Home = () => {
                     <View className="w-52 h-40 bg-[#F7D8D4] rounded-3xl">
                         <Pressable
                             className="text-center m-auto gap-2"
-                            onPress={() => router.push("/(passenger)/(pages)/onlinePayment")}
+                            onPress={() => router.push("/(operator)/(tabs)/payments")}
 
                         >
                             <Ionicons name="card" size={40} color="#78232A" className="text-center m-auto"/>
@@ -101,7 +101,7 @@ const Home = () => {
                     <View className="w-52 h-40 bg-[#F7D8D4] rounded-3xl">
                         <Pressable
                             className="text-center m-auto gap-2"
-                            onPress={() => router.push("/(shared)/lostnfoundHome")}
+                            onPress={() => router.push("/(operator)/(pages)/lostnfoundHome")}
                         >
                             <MaterialCommunityIcons name="briefcase-search" size={40} color="#78232A" className="text-center m-auto"/>
                             <Text className="text-lg font-bold text-center text-red-950">Lost & Found</Text>
@@ -121,7 +121,7 @@ const Home = () => {
                     <View className="w-52 h-40 bg-[#F7D8D4] rounded-3xl">
                         <Pressable
                             className="text-center m-auto gap-2"
-                            onPress={() => router.push("/(passenger)/(pages)/createFeedback")}
+                            onPress={() => router.push("/(operator)/(pages)/addExpenses")}
                         >
                             <MaterialIcons name="attach-money" size={40} color="#78232A" className="text-center m-auto"/>
                             <Text className="text-lg font-bold text-center text-red-950">Expenses</Text>

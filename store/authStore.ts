@@ -7,7 +7,6 @@ import axios from "axios";
 export const useAuthStore = create<authType>((set) => ({
     user: null,
     token: null,
-    email: null,
     isLoading: false,
 
     login: async(payload : LoginPayload) =>{
@@ -81,9 +80,9 @@ export const useAuthStore = create<authType>((set) => ({
     },
 
     logout: async () => {
-        const token = await AsyncStorage.removeItem("token");
-        const user = await AsyncStorage.removeItem("userId");
+        await AsyncStorage.removeItem("token");
+        await AsyncStorage.removeItem("userId");
 
-        set({user: null, token: null, email: null})
+        set({user: null, token: null})
     }
 }));

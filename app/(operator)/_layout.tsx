@@ -76,6 +76,42 @@ const OperatorLayout = () => {
                     href: null
                 }}
             />
+            <Tabs.Screen
+                name="(pages)/lostnfoundHome"
+                options={{
+                    href: null
+                }}
+            />
+            <Tabs.Screen
+                name="(pages)/lostItems"
+                options={{
+                    href: null
+                }}
+            />
+            <Tabs.Screen
+                name="(pages)/foundItems"
+                options={{
+                    href: null
+                }}
+            />
+            <Tabs.Screen
+                name="(pages)/addLostnFoundItems"
+                options={{
+                    href: null
+                }}
+            />
+            <Tabs.Screen
+                name="(pages)/addExpenses"
+                options={{
+                    href: null
+                }}
+            />
+            <Tabs.Screen
+                name="(pages)/liveLocation"
+                options={{
+                    href: null
+                }}
+            />
         </Tabs>
     );
 }

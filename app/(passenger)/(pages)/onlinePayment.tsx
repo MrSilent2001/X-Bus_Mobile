@@ -1,8 +1,10 @@
-import {ScrollView} from "react-native";
+import {ScrollView, Text} from "react-native";
 
 const OnlinePayment = () => {
     return(
-        <ScrollView>hi</ScrollView>
+        <ScrollView>
+            <Text>Online Payments</Text>
+        </ScrollView>
     );
 }
 
