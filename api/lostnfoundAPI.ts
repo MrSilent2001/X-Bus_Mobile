@@ -1,22 +1,14 @@
-import axios from "axios";
-import {API_URL} from "@/constants/api";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from '@/util/apiInterceptor';
 import {LostnFoundData} from "@/types/type";
 
 export const addNewItem = async (formData: LostnFoundData, description: string, userId: string) => {
     try {
-        const token = await AsyncStorage.getItem("token");
         const data = {
             ...formData,
             userId: Number(userId),
             description: description,
         };
-        const response = await axios.post(`${API_URL}/lostnfound/create`, data, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-
+        const response = await api.post(`api/lostnfound/create`, data);
         return response;
     } catch (error) {
         console.log(error);
@@ -26,12 +18,7 @@ export const addNewItem = async (formData: LostnFoundData, description: string, 
 
 export const getAllLostItems = async ( dateFilter: string | null) => {
     try {
-        const token = await AsyncStorage.getItem("token");
-
-        const response = await axios.get(`${API_URL}/lostnfound/getAllLostItems`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+        const response = await api.get(`api/lostnfound/getAllLostItems`, {
             params: {
                 filter: dateFilter,
             },
@@ -46,12 +33,7 @@ export const getAllLostItems = async ( dateFilter: string | null) => {
 
 export const getAllFoundItems = async ( dateFilter: string | null) => {
     try {
-        const token = await AsyncStorage.getItem("token");
-
-        const response = await axios.get(`${API_URL}/lostnfound/getAllFoundItems`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+        const response = await api.get(`api/lostnfound/getAllFoundItems`, {
             params: {
                 filter: dateFilter,
             },

@@ -1,16 +1,10 @@
-import axios from "axios";
-import {API_URL} from "@/constants/api";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from '@/util/apiInterceptor';
 
 export const getUserById = async (id: string | null) => {
     try {
-        const token = await AsyncStorage.getItem("token");
-        const response = await axios.get(`${API_URL}/user/getUserById`,{
+        const response = await api.get(`api/user/getUserById`,{
             params: {
                 id: id
-            },
-            headers: {
-                Authorization: `Bearer ${token}`
             }
         });
 

@@ -1,16 +1,10 @@
-import axios from "axios";
-import {API_URL} from "@/constants/api";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from '@/util/apiInterceptor';
 
 export const getReservedSeats = async (date: string, scheduleId: string | null) => {
     try {
-        const token = await AsyncStorage.getItem("token");
         const params ={ date: date, scheduleId: scheduleId };
 
-        const response = await axios.get(`${API_URL}/reservation/getReservedSeats`,{
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
+        const response = await api.get(`api/reservation/getReservedSeats`,{
             params: params
         });
 
@@ -24,12 +18,7 @@ export const getReservedSeats = async (date: string, scheduleId: string | null) 
 
 export const getReservationsByUserId = async (userId: string) => {
     try{
-        const token = await AsyncStorage.getItem("token");
-
-        const response = await axios.get(`${API_URL}/reservation/getReservationsByUserId`,{
-            headers:{
-                Authorization: `Bearer ${token}`
-            },
+        const response = await api.get(`api/reservation/getReservationsByUserId`,{
             params:{
                 userId: userId
             }

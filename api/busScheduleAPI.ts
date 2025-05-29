@@ -1,11 +1,8 @@
-import axios from "axios";
-import {API_URL} from "@/constants/api";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from '@/util/apiInterceptor';
 import {BusSchedule} from "@/types/type";
 
 export const getAllBusSchedules = async (date?: string, route?: string) => {
     try {
-        const token = await AsyncStorage.getItem("token");
         const params: { date?: string; route?: string } = {};
 
         if (date) {
@@ -15,10 +12,7 @@ export const getAllBusSchedules = async (date?: string, route?: string) => {
         if (route) {
             params.route = route;
         }
-        const response = await axios.get(`${API_URL}/schedule/getAllSchedules`,{
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
+        const response = await api.get(`api/schedule/getAllSchedules`,{
             params: params
         });
 
@@ -33,13 +27,9 @@ export const getAllBusSchedules = async (date?: string, route?: string) => {
 
 export const getDailyRouteSchedules = async (date: Date | null, route: string | null) => {
     try {
-        const token = await AsyncStorage.getItem("token");
         const params ={ date: date, route: route };
 
-        const response = await axios.get(`${API_URL}/schedule/getDailyRouteSchedule`,{
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
+        const response = await api.get(`api/schedule/getDailyRouteSchedule`,{
             params: params
         });
 
@@ -54,12 +44,7 @@ export const getDailyRouteSchedules = async (date: Date | null, route: string | 
 
 export const getSchedulesByBusId = async (id: string | null) => {
     try {
-        const token = await AsyncStorage.getItem("token");
-
-        const response = await axios.get(`${API_URL}/schedule/getSchedulesByBusId`,{
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
+        const response = await api.get(`api/schedule/getSchedulesByBusId`,{
             params:{
                 id: id
             }
@@ -76,13 +61,7 @@ export const getSchedulesByBusId = async (id: string | null) => {
 
 export const addNewSchedule = async (data: BusSchedule) => {
     try {
-        const token = await AsyncStorage.getItem("token");
-
-        const response = await axios.post(`${API_URL}/schedule/newSchedule`, data,{
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        const response = await api.post(`api/schedule/newSchedule`, data);
 
         if (response.status === 200) {
             return response.data;

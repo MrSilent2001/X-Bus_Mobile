@@ -1,16 +1,10 @@
-import axios from "axios";
-import {API_URL} from "@/constants/api";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from '@/util/apiInterceptor';
 
 export const getBusById = async (userId: string | null) => {
     try {
-        const token = await AsyncStorage.getItem("token");
-        const response = await axios.get(`${API_URL}/bus/getBusById`,{
+        const response = await api.get(`api/bus/getBusById`,{
             params:{
                 userId
-            },
-            headers: {
-                Authorization: `Bearer ${token}`
             }
         });
 
@@ -24,12 +18,7 @@ export const getBusById = async (userId: string | null) => {
 
 export const getBusRoutes = async () => {
     try {
-        const token = await AsyncStorage.getItem("token");
-        const response = await axios.get(`${API_URL}/bus/getBusRoutes`,{
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        const response = await api.get(`api/bus/getBusRoutes`);
 
         if (response.status === 200) {
             return response.data;
@@ -42,12 +31,7 @@ export const getBusRoutes = async () => {
 
 export const getBusRegNo = async () => {
     try {
-        const token = await AsyncStorage.getItem("token");
-        const response = await axios.get(`${API_URL}/bus/getBusRegNo`,{
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        const response = await api.get(`api/bus/getBusRegNo`);
 
         if (response.status === 200) {
             return response.data;

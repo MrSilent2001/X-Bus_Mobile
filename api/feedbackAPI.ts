@@ -1,6 +1,4 @@
-import axios from "axios";
-import {API_URL} from "@/constants/api";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from '@/util/apiInterceptor';
 
 export const addNewFeedback = async (data: {
     passengerName: string;
@@ -9,14 +7,7 @@ export const addNewFeedback = async (data: {
     userId: number;
 }) => {
     try {
-        const token = await AsyncStorage.getItem("token");
-
-        const response = await axios.post(`${API_URL}/feedback/addNewFeedback`, data,{
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-
+        const response = await api.post(`api/feedback/addNewFeedback`, data);
         return response;
     }catch(error) {
         console.log(error);
@@ -26,12 +17,7 @@ export const addNewFeedback = async (data: {
 
 export const getAllFeedbacks = async (busRegNo: string, filter?: string | null) => {
     try {
-        const token = await AsyncStorage.getItem("token");
-
-        const response = await axios.get(`${API_URL}/feedback/getAllFeedbacks`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+        const response = await api.get(`apiURL}/feedback/getAllFeedbacks`, {
             params: {
                 filter: filter,
                 busRegNo: busRegNo,
