@@ -151,7 +151,7 @@ const SeatReservation = () => {
 
                     <View className="my-5">
                         <CustomButton
-                            title="Confirm SeatAvailability"
+                            title="Confirm Reservation"
                             onPress={handleReservation}
                         />
                     </View>

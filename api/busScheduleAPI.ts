@@ -12,7 +12,7 @@ export const getAllBusSchedules = async (date?: string, route?: string) => {
         if (route) {
             params.route = route;
         }
-        const response = await api.get(`api/schedule/getAllSchedules`,{
+        const response = await api.get(`/schedule/getAllSchedules`,{
             params: params
         });
 
@@ -29,7 +29,7 @@ export const getDailyRouteSchedules = async (date: Date | null, route: string | 
     try {
         const params ={ date: date, route: route };
 
-        const response = await api.get(`api/schedule/getDailyRouteSchedule`,{
+        const response = await api.get(`/schedule/getDailyRouteSchedule`,{
             params: params
         });
 
@@ -44,7 +44,7 @@ export const getDailyRouteSchedules = async (date: Date | null, route: string | 
 
 export const getSchedulesByBusId = async (id: string | null) => {
     try {
-        const response = await api.get(`api/schedule/getSchedulesByBusId`,{
+        const response = await api.get(`/schedule/getSchedulesByBusId`,{
             params:{
                 id: id
             }
@@ -61,7 +61,7 @@ export const getSchedulesByBusId = async (id: string | null) => {
 
 export const addNewSchedule = async (data: BusSchedule) => {
     try {
-        const response = await api.post(`api/schedule/newSchedule`, data);
+        const response = await api.post(`/schedule/newSchedule`, data);
 
         if (response.status === 200) {
             return response.data;

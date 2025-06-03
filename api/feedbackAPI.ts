@@ -7,7 +7,7 @@ export const addNewFeedback = async (data: {
     userId: number;
 }) => {
     try {
-        const response = await api.post(`api/feedback/addNewFeedback`, data);
+        const response = await api.post(`/feedback/addNewFeedback`, data);
         return response;
     }catch(error) {
         console.log(error);
@@ -17,7 +17,7 @@ export const addNewFeedback = async (data: {
 
 export const getAllFeedbacks = async (busRegNo: string, filter?: string | null) => {
     try {
-        const response = await api.get(`apiURL}/feedback/getAllFeedbacks`, {
+        const response = await api.get(`/feedback/getAllFeedbacks`, {
             params: {
                 filter: filter,
                 busRegNo: busRegNo,

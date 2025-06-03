@@ -4,7 +4,7 @@ export const getReservedSeats = async (date: string, scheduleId: string | null) 
     try {
         const params ={ date: date, scheduleId: scheduleId };
 
-        const response = await api.get(`api/reservation/getReservedSeats`,{
+        const response = await api.get(`/reservation/getReservedSeats`,{
             params: params
         });
 
@@ -18,7 +18,7 @@ export const getReservedSeats = async (date: string, scheduleId: string | null) 
 
 export const getReservationsByUserId = async (userId: string) => {
     try{
-        const response = await api.get(`api/reservation/getReservationsByUserId`,{
+        const response = await api.get(`/reservation/getReservationsByUserId`,{
             params:{
                 userId: userId
             }

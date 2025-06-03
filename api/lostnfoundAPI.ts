@@ -8,7 +8,7 @@ export const addNewItem = async (formData: LostnFoundData, description: string, 
             userId: Number(userId),
             description: description,
         };
-        const response = await api.post(`api/lostnfound/create`, data);
+        const response = await api.post(`/lostnfound/create`, data);
         return response;
     } catch (error) {
         console.log(error);
@@ -18,7 +18,7 @@ export const addNewItem = async (formData: LostnFoundData, description: string, 
 
 export const getAllLostItems = async ( dateFilter: string | null) => {
     try {
-        const response = await api.get(`api/lostnfound/getAllLostItems`, {
+        const response = await api.get(`/lostnfound/getAllLostItems`, {
             params: {
                 filter: dateFilter,
             },
@@ -33,7 +33,7 @@ export const getAllLostItems = async ( dateFilter: string | null) => {
 
 export const getAllFoundItems = async ( dateFilter: string | null) => {
     try {
-        const response = await api.get(`api/lostnfound/getAllFoundItems`, {
+        const response = await api.get(`/lostnfound/getAllFoundItems`, {
             params: {
                 filter: dateFilter,
             },

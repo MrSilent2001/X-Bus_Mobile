@@ -2,7 +2,7 @@ import api from '@/util/apiInterceptor';
 
 export const getUserById = async (id: string | null) => {
     try {
-        const response = await api.get(`api/user/getUserById`,{
+        const response = await api.get(`/user/getUserById`,{
             params: {
                 id: id
             }
