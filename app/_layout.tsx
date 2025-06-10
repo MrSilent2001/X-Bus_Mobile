@@ -3,6 +3,7 @@ import {Stack} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import "../global.css";
+import {StripeProvider} from "@stripe/stripe-react-native";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -22,7 +23,11 @@ const RootLayout = () => {
     return null;
   }
 
-  return (
+  const publishableKey = process.env.EXPO_PUBLIC_PUBLISHABLE_KEY || "";
+
+
+    return (
+      <StripeProvider publishableKey={publishableKey}>
           <Stack>
               <Stack.Screen name="index" options={{ headerShown: false }} />
               <Stack.Screen name="(passenger)" options={{ headerShown: false }} />
@@ -30,6 +35,7 @@ const RootLayout = () => {
               <Stack.Screen name="(auth)" options={{ headerShown: false }} />
               <Stack.Screen name="+not-found" />
           </Stack>
+      </StripeProvider>
   );
 }
 
