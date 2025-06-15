@@ -8,7 +8,9 @@ import CustomButton from "@/components/customButton";
 import {getDailyRouteSchedules} from "@/api/busScheduleAPI";
 import {getReservedSeats} from "@/api/reservationAPI";
 import { useStripe} from '@stripe/stripe-react-native';
-import api from '@/util/apiInterceptor';
+import {fetchPaymentSheetParams, savePaymentToDatabase} from "@/api/paymentAPI";
+import {useAuthStore} from "@/store/authStore";
+import {router} from "expo-router";
 
 const SeatReservation = () => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -20,6 +22,9 @@ const SeatReservation = () => {
     const [schedules, setSchedules] = useState<{ label: string; value: string }[]>([]);
     const [occupiedSeats, setOccupiedSeats] = useState<number[]>([]);
     const [busFare, setBusFare] = useState<number | null>(null);
+    const [paymentIntent, setPaymentIntent] = useState<string | null>(null);
+
+    const {user} = useAuthStore();
 
     const { initPaymentSheet, presentPaymentSheet } = useStripe();
     const [loading, setLoading] = useState(false);
@@ -92,63 +97,96 @@ const SeatReservation = () => {
         console.log(`Seat ${seatNumber} selected`);
     };
 
-    const fetchPaymentSheetParams = async () => {
-        const response = await api.post(`/payment/payment-sheet`,{
-            amount: busFare,
-            scheduleId: selectedSchedule,
-            date: selectedDate ? selectedDate.toISOString().split('T')[0] : null,
-        });
-        const { paymentIntent, ephemeralKey, customer } = await response.data;
-
-        return {
-            paymentIntent,
-            ephemeralKey
-        };
+    const resetReservationState = () => {
+        setSelectedDate(null);
+        setSelectedRoute(null);
+        setSelectedSchedule(null);
+        setOccupiedSeats([]);
+        setBusFare(null);
+        setPaymentIntent(null);
+        setSchedules([]);
+        setLoading(false);
     };
 
+    //Handle payment gateway
     const initializePaymentSheet = async () => {
-        const {
-            paymentIntent,
-            ephemeralKey
-        } = await fetchPaymentSheetParams();
+        if (!busFare || !selectedSchedule || !selectedDate) {
+            Alert.alert("Incomplete Selection", "Please select date, route, time, and check seat map first.");
+            return;
+        }
 
-        const { error } = await initPaymentSheet({
-            merchantDisplayName: "X-Bus",
-            customerEphemeralKeySecret: ephemeralKey,
-            paymentIntentClientSecret: paymentIntent,
-            // Set `allowsDelayedPaymentMethods` to true if your business can handle payment
-            //methods that complete payment after a delay, like SEPA Debit and Sofort.
-            allowsDelayedPaymentMethods: true,
-            defaultBillingDetails: {
-                name: "customer",
+        try {
+            const { paymentIntent } = await fetchPaymentSheetParams(
+                busFare,
+                selectedSchedule,
+                selectedDate,
+                user
+            );
+
+            const { error } = await initPaymentSheet({
+                merchantDisplayName: "X-Bus",
+                paymentIntentClientSecret: paymentIntent,
+                allowsDelayedPaymentMethods: true,
+                defaultBillingDetails: {
+                    name: "customer",
+                }
+            });
+
+            if (!error) {
+                setLoading(true);
+                setPaymentIntent(paymentIntent);
+                return paymentIntent;
+            } else {
+                console.log("PaymentSheet init error: ", error);
+                return null;
             }
-        });
-        if (!error) {
-            setLoading(true);
+        } catch (error) {
+            console.log("Error initializing payment sheet: ", error);
+            Alert.alert("Error", "Failed to initialize payment sheet.");
         }
     };
 
-    const openPaymentSheet = async () => {
+    const openPaymentSheet = async (paymentIntent: string | null) => {
         const { error } = await presentPaymentSheet();
 
         if (error) {
             Alert.alert(`Error code: ${error.code}`, error.message);
         } else {
-            Alert.alert('Success', 'Your order is confirmed!');
+            if (paymentIntent) {
+                const response = await savePaymentToDatabase(paymentIntent);
+                if(response?.data.status === "succeeded"){
+                    return {status: "success"}
+                }
+            }
+            return null;
         }
     };
 
+    //Handle Reservation
     const handleReservation = async () => {
         try {
+            let intent = paymentIntent;
+
             if (!loading) {
-                await initializePaymentSheet();
+                intent = await initializePaymentSheet();
+                if (!intent) return;
             }
-            await openPaymentSheet();
+
+            const response = await openPaymentSheet(intent);
+            if (response && response.status === 'success') {
+                resetReservationState();
+                router.push("/(passenger)/(pages)/paymentSuccess");
+                return;
+            }
+            resetReservationState();
+            router.push("/(passenger)/(pages)/paymentFailure");
+
         } catch (error) {
             console.log("Payment error:", error);
             Alert.alert("Payment Error", "Something went wrong while processing your payment.");
         }
     };
+
 
 
     return(

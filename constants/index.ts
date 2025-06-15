@@ -34,6 +34,8 @@ import signUpCar from "@/assets/images/signup-car.png";
 import welcome1 from "@/assets/images/welcome1.jpg";
 import welcome2 from "@/assets/images/welcome2.jpg";
 import welcome3 from "@/assets/images/welcome3.jpg";
+import success from "@/assets/images/success-icon.png";
+import failure from "@/assets/images/failure-icon.png";
 
 export const images = {
     onboarding1,
@@ -46,7 +48,9 @@ export const images = {
     message,
     welcome1,
     welcome2,
-    welcome3
+    welcome3,
+    success,
+    failure
 };
 
 export const icons = {

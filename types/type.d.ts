@@ -76,6 +76,14 @@ interface LostnFoundData{
     time: string;
     status: string;
 }
+
+interface PaymentData {
+    amount: number;
+    userId: number;
+    scheduleId: number;
+    status?: string;
+    date: Date;
+}
 declare interface Driver {
     driver_id: number;
     first_name: string;

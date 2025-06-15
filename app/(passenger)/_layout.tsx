@@ -118,6 +118,18 @@ const PassengerLayout = () => {
                     href: null
                 }}
             />
+            <Tabs.Screen
+                name="(pages)/paymentSuccess"
+                options={{
+                    href: null
+                }}
+            />
+            <Tabs.Screen
+                name="(pages)/paymentFailure"
+                options={{
+                    href: null
+                }}
+            />
         </Tabs>
     );
 }
