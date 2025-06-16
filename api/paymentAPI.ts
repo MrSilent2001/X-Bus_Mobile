@@ -27,3 +27,5 @@ export const savePaymentToDatabase = async (paymentIntent: string) => {
         console.log("Failed to save payment:", error);
     }
 };
+
+
