@@ -1,5 +1,7 @@
 export const API_URL = "http://10.0.2.2:8080";
 
+export const EXPO_GOOGLE_MAPS_API="AIzaSyD8off1rwVGf04pNzVK46f39N9iQIUF3Cc";
+
 export const dateOptions = [
     { label: "Today", value: "Today" },
     { label: "Yesterday", value: "Yesterday" },
