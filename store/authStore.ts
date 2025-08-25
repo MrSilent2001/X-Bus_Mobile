@@ -9,6 +9,8 @@ export const useAuthStore = create<authType>((set) => ({
     token: null,
     isLoading: false,
 
+    setUser: (user: User) => set({ user }),
+
     login: async(payload : LoginPayload) =>{
         set({isLoading: true})
 
@@ -84,5 +86,5 @@ export const useAuthStore = create<authType>((set) => ({
         await AsyncStorage.removeItem("userId");
 
         set({user: null, token: null})
-    }
+    },
 }));
