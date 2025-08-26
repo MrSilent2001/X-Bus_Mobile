@@ -54,7 +54,8 @@
     "react-native-webview": "13.12.5",
     "zustand": "^5.0.3",
     "expo-location": "~18.0.10",
-    "@stripe/stripe-react-native": "0.38.6"
+    "@stripe/stripe-react-native": "0.38.6",
+    "expo-image-picker": "~16.0.6"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

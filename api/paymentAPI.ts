@@ -1,6 +1,5 @@
 import api from '@/util/apiInterceptor';
 import {User} from "@/types/type";
-import {PaymentIntent} from "@stripe/stripe-react-native";
 
 export const fetchPaymentSheetParams = async (busFare: number, selectedSchedule: string, selectedDate: Date, user: User | null)=> {
     const response = await api.post(`/payment/payment-sheet`,{
@@ -28,4 +27,16 @@ export const savePaymentToDatabase = async (paymentIntent: string) => {
     }
 };
 
+export const paymentHistory = async (userId: number, selectedFilter: string) => {
+    try{
+        const response = await api.get(`/payment/user-payments/${userId}`, {
+            params: {
+                filter: selectedFilter
+            },
+        });
+        return response.data;
+    }catch(error){
+        console.log("Failed to load payment history");
+    }
+};
 

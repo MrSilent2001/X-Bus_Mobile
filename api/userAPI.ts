@@ -17,19 +17,16 @@ export const getUserById = async (id: string | null) => {
     }
 }
 
-export const updateUser = async (id: User | null, payload: Partial<User>) => {
-    try{
-        const response = await api.patch(`/user/updateUser`,
-            payload,{
-            params: {
-                id: id,
-            }
-        })
+export const updateUser = async ( payload: Partial<User>) => {
+    try {
+        console.log(payload)
+        const response = await api.patch(`/user/editUser`, payload);
 
-        if (response.status === 204) {
+        if (response.status === 200 || response.status === 204) {
             return response.data;
         }
-    }catch(error) {
-        console.log(error);
+    } catch (error) {
+        console.error("Update user error:", error);
+        return null;
     }
-}
+};

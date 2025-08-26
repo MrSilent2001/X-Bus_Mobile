@@ -77,24 +77,29 @@ interface LostnFoundData{
     status: string;
 }
 
-interface PaymentData {
+type PaymentData = {
+    id: number;
+    date: string;
     amount: number;
-    userId: number;
-    scheduleId: number;
-    status?: string;
-    date: Date;
-}
-declare interface Driver {
-    driver_id: number;
-    first_name: string;
-    last_name: string;
-    profile_image_url: string;
-    car_image_url: string;
-    car_seats: number;
-    rating: number;
-}
-
-
+    status: string;
+    user: {
+        id: number;
+        name: string;
+        email: string;
+    };
+    schedule: {
+        id: number;
+        date: string;
+        scheduledTime: string;
+        bus: {
+            id: number;
+            regNo: string;
+            fleetName: string;
+            routeNo: string;
+            route: string;
+        };
+    };
+};
 declare interface MarkerData {
     latitude: number;
     longitude: number;
@@ -174,14 +179,6 @@ declare interface InputFieldProps extends TextInputProps {
     className?: string;
 }
 
-declare interface PaymentProps {
-    fullName: string;
-    email: string;
-    amount: string;
-    driverId: number;
-    rideTime: number;
-}
-
 declare interface LocationStore {
     userLatitude: number | null;
     userLongitude: number | null;
@@ -207,18 +204,4 @@ declare interface LocationStore {
         longitude: number;
         address: string;
     }) => void;
-}
-
-declare interface DriverStore {
-    drivers: MarkerData[];
-    selectedDriver: number | null;
-    setSelectedDriver: (driverId: number) => void;
-    setDrivers: (drivers: MarkerData[]) => void;
-    clearSelectedDriver: () => void;
-}
-
-declare interface DriverCardProps {
-    item: MarkerData;
-    selected: number;
-    setSelected: () => void;
 }
