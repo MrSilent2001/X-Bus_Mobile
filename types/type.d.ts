@@ -11,10 +11,10 @@ interface User {
     email: string;
     nic:string;
     contactNo: string;
-    password: string;
-    confirmPassword: string;
+    password?: string;
+    confirmPassword?: string;
     profilePicture: string;
-    role: string;
+    role?: string;
 }
 
 interface LoginPayload {
@@ -26,7 +26,7 @@ interface authType{
     user: User | null
     token: string |null
     isLoading: boolean
-
+    setUser: (user: User) => void;
     login: (payload: LoginPayload) => Promise<AuthResponse>
     signup: (payload: User) => Promise<AuthResponse>
     checkAuth: () => void
