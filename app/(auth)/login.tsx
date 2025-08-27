@@ -9,6 +9,8 @@ import PasswordField from "@/components/passwordField";
 import {useAuthStore} from "@/store/authStore";
 import {Alert} from "react-native";
 import {parseJwt} from "@/util/parseJwt";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {Feather} from "@expo/vector-icons";
 
 interface User{
     identifier: string;
@@ -37,9 +39,13 @@ const Login = () => {
             return;
         }
 
-        if (!token) throw new Error("Token not found");
+        const freshToken = await AsyncStorage.getItem('token');
+        if (!freshToken){
+            Alert.alert("Login Error", "Token not found after login");
+            return;
+        }
 
-        const decodedToken = parseJwt(token);
+        const decodedToken = parseJwt(freshToken);
         const role = decodedToken.role;
 
         if (role === "passenger") {
@@ -55,64 +61,90 @@ const Login = () => {
     return (
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                    <ScrollView className="flex-1 bg-white" keyboardShouldPersistTaps="handled">
-                        <View className="flex-1 bg-white">
-                            <View className="relative w-full h-[350px]">
+                <ScrollView className="flex-1 bg-gray-50" keyboardShouldPersistTaps="handled">
+                    {/* Header Section with Logo */}
+                    <View className="bg-white pt-12 pb-8 px-6 shadow-sm">
+                        <View className="items-center">
+                            <View className="bg-red-100 p-5 rounded-full mb-4">
                                 <Image
-                                    source={images.signUpCar}
-                                    className="z-0 w-full h-[350px]"
+                                    source={images.BusLogo}
+                                    className="w-48 h-48"
+                                    resizeMode="contain"
                                 />
+                            </View>
+                            <Text className="text-3xl font-bold text-center text-gray-800 mb-2">
+                                Welcome to X-Bus!
+                            </Text>
+                            <Text className="text-gray-500 text-center">
+                                Sign in to access your account
+                            </Text>
+                        </View>
+                    </View>
 
-                                <Text className="text-4xl text-center text-black font-JakartaBold bottom-10 ">
-                                    Welcome to X-Bus!
-                                </Text>
+                    {/* Form Section */}
+                    <View className="mx-5 mt-6">
+                        <View className="bg-white rounded-2xl p-6 shadow-sm">
+                            <View className="flex-row items-center justify-center mb-4">
+                                <View className="bg-red-100 p-2 rounded-lg mr-3">
+                                    <Feather name="shield" size={20} color="#dc2626" />
+                                </View>
+                                <Text className="text-xl font-semibold text-gray-800">Sign In</Text>
                             </View>
 
-                            <View className="p-5">
-                                <View className="mt-3">
-                                    <Text className="text-lg font-JakartaSemiBold">Email/Reg.No</Text>
-                                    <InputField
-                                        label="Email"
-                                        placeholder="Enter your email"
-                                        icon="mail-outline"
-                                        value={form.identifier}
-                                        onChangeText={(value) => setForm({...form, identifier: value})}
-                                        keyboardType="email-address"
-                                    />
-                                </View>
+                            <View className="mb-4">
+                                <Text className="text-gray-700 font-medium mb-2">Email/Registration No</Text>
+                                <InputField
+                                    label="Email"
+                                    placeholder="Enter your email or registration number"
+                                    icon="mail-outline"
+                                    value={form.identifier}
+                                    onChangeText={(value) => setForm({...form, identifier: value})}
+                                    keyboardType="email-address"
+                                />
+                            </View>
 
-                                <View className="mt-3">
-                                    <Text className="text-lg font-JakartaSemiBold">Password</Text>
-                                    <PasswordField
-                                        label="Password"
-                                        placeholder="Enter your password"
-                                        icon="lock-closed-outline"
-                                        value={form.password}
-                                        onChangeText={(value) => setForm({...form, password: value})}
-                                    />
-                                </View>
+                            <View className="mb-6">
+                                <Text className="text-gray-700 font-medium mb-2">Password</Text>
+                                <PasswordField
+                                    label="Password"
+                                    placeholder="Enter your password"
+                                    icon="lock-closed-outline"
+                                    value={form.password}
+                                    onChangeText={(value) => setForm({...form, password: value})}
+                                />
+                            </View>
 
-                                <Link href="/signup" className="text-lg text-general-200 mt-5 left-5">
-                                    <Text>Don't you have an Account? </Text>
-                                    <Text className="text-danger-500">SignUp</Text>
-                                </Link>
+                            <CustomButton
+                                title="Sign In"
+                                onPress={() => onSignInPress(form)}
+                                disabled={!form.identifier || !form.password || isLoading}
+                                loading={isLoading}
+                                bgVariant="primary"
+                            />
 
-                                <View className="mt-2">
-                                    <CustomButton
-                                        title="Sign In"
-                                        onPress={() => onSignInPress(form)}
-                                    />
-                                </View>
+                            <Link href="/forgotPassword" className="mt-4">
+                                <Text className="text-center text-blue-600 font-medium">
+                                    Forgot Password?
+                                </Text>
+                            </Link>
+                        </View>
 
-                                {/*<OAuth/>*/}
-
-                                <Link href="/forgotPassword" className="text-lg text-center text-general-200 mt-2">
-                                    <Text>Forgot Password? </Text>
-                                    <Text className="text-danger-500">Reset Password</Text>
+                        {/* Sign Up Link */}
+                        <View className="bg-white rounded-2xl p-6 shadow-sm mt-4">
+                            <View className="flex-row items-center justify-center">
+                                <Text className="text-gray-600">Don't have an account? </Text>
+                                <Link href="/signup">
+                                    <Text className="text-red-600 font-semibold">Sign Up</Text>
                                 </Link>
                             </View>
                         </View>
-                    </ScrollView>
+
+                        {/* OAuth Section (commented out for now) */}
+                        {/*<View className="mt-4">
+                            <OAuth/>
+                        </View>*/}
+                    </View>
+                </ScrollView>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
     );

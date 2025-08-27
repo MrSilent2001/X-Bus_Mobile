@@ -1,108 +1,141 @@
-import {Text, View} from "react-native";
-import React, {useEffect, useState} from "react";
+import {Text, View, ActivityIndicator, FlatList, RefreshControl} from "react-native";
+import React, {useEffect, useState, useCallback} from "react";
 import DropdownMenu from "@/components/dropdown";
 import {getAllFoundItems } from "@/api/lostnfoundAPI";
 import {dateOptions} from "@/constants/api";
 
 const FoundItems = () => {
     const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
-    // const [routeDropdownOpen, setRouteDropdownOpen] = useState(false);
-    // const [routeOptions, setRouteOptions] = useState<{ label: string; value: string }[]>([])
-    // const [routeFilter, setRouteFilter] = useState<string | null>(null);
     const [dateFilter, setDateFilter] = useState<string | null>(null);
     const [foundItems, setFoundItems] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [refreshing, setRefreshing] = useState(false);
 
-    // useEffect(() => {
-    //     const fetchRoutes = async () => {
-    //         try {
-    //             const routes = await getBusRoutes();
-    //             if (routes && routes.length > 0) {
-    //                 const formattedRoutes = routes.map((route: string) => ({
-    //                     label: route,
-    //                     value: route,
-    //                 }));
-    //                 setRouteOptions(formattedRoutes);
-    //             }
-    //         } catch (error) {
-    //             console.log(error);
-    //         }
-    //     };
-    //
-    //     fetchRoutes();
-    // }, []);
+    const fetchFoundItems = async (showLoader = true) => {
+        try {
+            showLoader && setLoading(true);
+            setError(null);
+            const response = await getAllFoundItems(dateFilter);
+            setFoundItems(response || []);
+        } catch (err: any) {
+            setError(err?.message || "Failed to load found items");
+        } finally {
+            showLoader && setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchFoundItems = async () => {
-            try {
-                const response = await getAllFoundItems(dateFilter);
-                setFoundItems(response);
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
         fetchFoundItems();
     }, [dateFilter]);
 
-    return(
-        <View className="mx-5 my-5">
-            <Text className="text-2xl font-bold text-center my-3">Lost Items</Text>
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        await fetchFoundItems(false);
+        setRefreshing(false);
+    }, [dateFilter]);
 
-            <View style={{ position: 'relative', zIndex: 2000 }} className="my-5">
-                <Text className="text-lg font-JakartaSemiBold mx-2 mb-3">Date</Text>
-                <DropdownMenu
-                    placeholder="All"
-                    options={dateOptions}
-                    selectedValue={dateFilter}
-                    onSelect={(value) => setDateFilter(value)}
-                    zIndex={2000}
-                    open={dateDropdownOpen}
-                    setOpen={setDateDropdownOpen}
-                />
+    const renderItem = ({ item, index }: { item: any; index: number }) => {
+        const itemDate = item.date.split('T')[0];
+        const itemTime = item.time.substring(0, 5);
+        
+        return (
+            <View className="w-full bg-red-200 rounded-2xl mb-4 p-6 shadow-sm border border-red-100 min-h-[200px]">
+                {/* Header with Date and Time */}
+                <View className="flex-row justify-between items-center mb-4">
+                    <View className="bg-red-100 px-3 py-2 rounded-lg">
+                        <Text className="text-sm font-semibold text-red-700">{itemDate}</Text>
+                    </View>
+                    <View className="bg-blue-100 px-3 py-2 rounded-lg">
+                        <Text className="text-sm font-semibold text-blue-700">{itemTime}</Text>
+                    </View>
+                </View>
+
+                {/* Description */}
+                <View className="mb-4 flex-1">
+                    <Text className="text-sm text-gray-600 mb-2">Description</Text>
+                    <Text className="text-lg font-semibold text-gray-900 leading-6">
+                        {item.description}
+                    </Text>
+                </View>
+
+                {/* Contact Information */}
+                <View className="bg-white rounded-xl p-4 border border-red-200">
+                    <Text className="text-sm text-gray-600 mb-2 text-center">If found, please contact</Text>
+                    <View className="flex-row justify-center items-center space-x-2">
+                        <Text className="text-base font-bold text-gray-900">
+                            {item.userName}
+                        </Text>
+                        <Text className="text-gray-500">•</Text>
+                        <Text className="text-base font-semibold text-blue-600">
+                            {item.contactNo}
+                        </Text>
+                    </View>
+                </View>
+            </View>
+        );
+    };
+
+    return (
+        <View className="flex-1 bg-gray-50">
+            <View className="mx-5 mt-6">
+                <Text className="text-2xl font-bold text-center mb-3">Found Items</Text>
+
+                <View style={{ position: 'relative', zIndex: 2000 }} className="my-5">
+                    <Text className="text-lg font-JakartaSemiBold mx-2 mb-3">Filter by Date</Text>
+                    <DropdownMenu
+                        placeholder="All Dates"
+                        options={dateOptions}
+                        selectedValue={dateFilter}
+                        onSelect={(value) => setDateFilter(value)}
+                        zIndex={2000}
+                        open={dateDropdownOpen}
+                        setOpen={setDateDropdownOpen}
+                    />
+                </View>
             </View>
 
-            {/*<View style={{ position: 'relative', zIndex: 1000 }} className="mt-3">*/}
-            {/*    <Text className="text-lg font-JakartaSemiBold mx-2 mb-3">Route</Text>*/}
-            {/*    <DropdownMenu*/}
-            {/*        placeholder="Select a route"*/}
-            {/*        options={routeOptions}*/}
-            {/*        selectedValue={routeFilter}*/}
-            {/*        onSelect={(value) => setRouteFilter(value)}*/}
-            {/*        zIndex={1000}*/}
-            {/*        open={routeDropdownOpen}*/}
-            {/*        setOpen={setRouteDropdownOpen}*/}
-            {/*    />*/}
-            {/*</View>*/}
-
-            <View className="mt-5">
-                {foundItems.length > 0 ? (
-                    foundItems.map((item, index) => (
-                        <View key={index} className="w-full h-40 bg-[#F7D8D4] rounded-3xl mb-3">
-                            <View className="flex flex-row w-full h-full p-4">
-                                <View className="w-full flex justify-center">
-                                    <View className="flex flex-row justify-between mx-2">
-                                        <Text className="text-lg font-bold text-red-950">{item.date.split('T')[0]}</Text>
-                                        <Text className="text-lg font-bold text-red-950">{item.time.substring(0, 5)}</Text>
-                                    </View>
-
-                                    <View className="flex flex-row justify-evenly my-3">
-                                        <Text className="text-lg font-bold text-red-950">{item.description}</Text>
-                                    </View>
-
-                                    <View className="flex justify-center items-center">
-                                        <Text className="text-lg font-bold text-red-950">
-                                            If found, plz contact
-                                        </Text>
-                                        <Text className="text-md font-bold text-red-950">
-                                            {item.userName} - {item.contactNo}
-                                        </Text>
-                                    </View>
-                                </View>
-                            </View>
-                        </View>
-                    ))
+            <View className="mx-5 mt-5 flex-1">
+                {loading ? (
+                    <View className="flex-1 items-center justify-center">
+                        <ActivityIndicator size="large" color="#dc2626" />
+                        <Text className="text-gray-500 mt-3">Loading found items...</Text>
+                    </View>
+                ) : error ? (
+                    <View className="flex-1 items-center justify-center">
+                        <Text className="text-red-600 mb-3 text-center">{error}</Text>
+                        <Text 
+                            className="text-blue-600 font-medium" 
+                            onPress={() => fetchFoundItems()}
+                        >
+                            Tap to retry
+                        </Text>
+                    </View>
+                ) : foundItems.length > 0 ? (
+                    <FlatList
+                        data={foundItems}
+                        keyExtractor={(item, index) => `found-item-${index}`}
+                        renderItem={renderItem}
+                        contentContainerStyle={{ paddingBottom: 24 }}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                                colors={['#dc2626']}
+                                tintColor="#dc2626"
+                            />
+                        }
+                        showsVerticalScrollIndicator={false}
+                    />
                 ) : (
-                    <Text className="text-center text-lg text-gray-500">No schedules available</Text>
+                    <View className="flex-1 items-center justify-center">
+                        <Text className="text-center text-lg text-gray-500 mb-2">
+                            No found items available
+                        </Text>
+                        <Text className="text-center text-sm text-gray-400">
+                            {dateFilter ? `Try adjusting your date filter` : `Items will appear here when found`}
+                        </Text>
+                    </View>
                 )}
             </View>
         </View>

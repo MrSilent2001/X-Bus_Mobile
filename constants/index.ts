@@ -36,75 +36,77 @@ import welcome2 from "@/assets/images/welcome2.jpg";
 import welcome3 from "@/assets/images/welcome3.jpg";
 import success from "@/assets/images/success-icon.png";
 import failure from "@/assets/images/failure-icon.png";
+import BusLogo from "@/assets/images/BusLogo.png";
 
 export const images = {
-    onboarding1,
-    onboarding2,
-    onboarding3,
-    getStarted,
-    signUpCar,
-    check,
-    noResult,
-    message,
-    welcome1,
-    welcome2,
-    welcome3,
-    success,
-    failure
+	onboarding1,
+	onboarding2,
+	onboarding3,
+	getStarted,
+	signUpCar,
+	check,
+	noResult,
+	message,
+	welcome1,
+	welcome2,
+	welcome3,
+	success,
+	failure,
+	BusLogo,
 };
 
 export const icons = {
-    arrowDown,
-    arrowUp,
-    backArrow,
-    chat,
-    checkmark,
-    close,
-    dollar,
-    email,
-    eyecross,
-    google,
-    home,
-    list,
-    lock,
-    map,
-    marker,
-    out,
-    person,
-    pin,
-    point,
-    profile,
-    search,
-    selectedMarker,
-    star,
-    target,
-    to,
+	arrowDown,
+	arrowUp,
+	backArrow,
+	chat,
+	checkmark,
+	close,
+	dollar,
+	email,
+	eyecross,
+	google,
+	home,
+	list,
+	lock,
+	map,
+	marker,
+	out,
+	person,
+	pin,
+	point,
+	profile,
+	search,
+	selectedMarker,
+	star,
+	target,
+	to,
 };
 
 export const welcome = [
-    {
-        id: 1,
-        title: "The perfect ride is just a tap away!",
-        description:
-            "Your journey begins with X-Bus. Find your ideal ride effortlessly.",
-        image: images.welcome1,
-    },
-    {
-        id: 2,
-        title: "Best travel experience in your hands with X-Bus",
-        description:
-            "Discover the convenience of finding your perfect ride with X-Bus",
-        image: images.welcome2,
-    },
-    {
-        id: 3,
-        title: "Your journey, your way. Let's go!",
-        description:
-            "Enter your destination, sit back, and let us take care of the rest.",
-        image: images.welcome3,
-    },
+	{
+		id: 1,
+		title: "The perfect ride is just a tap away!",
+		description:
+			"Your journey begins with X-Bus. Find your ideal ride effortlessly.",
+		image: images.welcome1,
+	},
+	{
+		id: 2,
+		title: "Best travel experience in your hands with X-Bus",
+		description:
+			"Discover the convenience of finding your perfect ride with X-Bus",
+		image: images.welcome2,
+	},
+	{
+		id: 3,
+		title: "Your journey, your way. Let's go!",
+		description:
+			"Enter your destination, sit back, and let us take care of the rest.",
+		image: images.welcome3,
+	},
 ];
 
 export const data = {
-    welcome,
+	welcome,
 };

@@ -55,11 +55,7 @@ const LiveLocation: React.FC = () => {
     useEffect(() => {
         if (searchQuery.trim() === "" && location) {
             // Keep only current-location marker
-            //setMarkers((prev) => prev.filter((m) => m.id === "current-location"));
-            setMarkers([
-                { id: "test", latitude: 6.9271, longitude: 79.8612, title: "Colombo", description: "Test marker" }
-            ]);
-
+            setMarkers((prev) => prev.filter((m) => m.id === "current-location"));
 
             const region: Region = {
                 latitude: location.latitude,
@@ -111,52 +107,6 @@ const LiveLocation: React.FC = () => {
             console.error("Geocoding API error:", error);
         }
     };
-    // const handleSearch = async () => {
-    //     if (!searchQuery.trim()) return;
-    //
-    //     try {
-    //         const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-    //             searchQuery
-    //         )}&key=${EXPO_GOOGLE_MAPS_API}`;
-    //
-    //         console.log("🔍 Geocoding request:", url);
-    //
-    //         const response = await axios.get(url);
-    //         console.log("📡 Geocode response:", response.data);
-    //
-    //         if (response.data.status === "OK" && response.data.results.length > 0) {
-    //             const { lat, lng } = response.data.results[0].geometry.location;
-    //
-    //             console.log("📍 Coordinates found:", lat, lng);
-    //
-    //             const newRegion: Region = {
-    //                 latitude: lat,
-    //                 longitude: lng,
-    //                 latitudeDelta: 0.01,
-    //                 longitudeDelta: 0.01,
-    //             };
-    //
-    //             mapRef.current?.animateToRegion(newRegion, 1000);
-    //
-    //             setMarkers((prev) => [
-    //                 ...prev.filter((m) => m.id === "current-location"),
-    //                 {
-    //                     id: `search-${Date.now()}`,
-    //                     latitude: lat,
-    //                     longitude: lng,
-    //                     title: searchQuery,
-    //                     description: "Searched location",
-    //                 },
-    //             ]);
-    //         } else {
-    //             console.warn("⚠️ Geocode returned no results:", response.data.status);
-    //             alert("Place not found. Try another search.");
-    //         }
-    //     } catch (error: any) {
-    //         console.error("❌ Geocoding API error:", error.message || error);
-    //         alert("Error fetching location. Check your API key & internet.");
-    //     }
-    // };
 
 
     if (errMsg) {
@@ -175,6 +125,13 @@ const LiveLocation: React.FC = () => {
             </View>
         );
     }
+
+    const initialRegion: Region = {
+        latitude: location.latitude,
+        longitude: location.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+    };
 
     return (
         <View className="flex-1 bg-white">
@@ -195,9 +152,10 @@ const LiveLocation: React.FC = () => {
             <MapView
                 ref={mapRef}
                 style={{ flex: 1 }}
-                provider="google"
-                showsUserLocation={false}
+                showsUserLocation={true}
+                showsMyLocationButton={true}
                 followsUserLocation={false}
+                initialRegion={initialRegion}
             >
                 {markers.map(({ id, latitude, longitude, title, description }) => (
                     <Marker

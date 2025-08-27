@@ -1,4 +1,4 @@
-import {View, Text, ScrollView} from "react-native";
+import {View, Text, FlatList} from "react-native";
 import React, {useEffect, useState} from "react";
 import {getBusById, getBusRoutes} from "@/api/busAPI";
 import {getDailyRouteSchedules} from "@/api/busScheduleAPI";
@@ -76,57 +76,82 @@ const SeatAvailability = () => {
         fetchOccupiedSeats();
     }, [selectedDate,selectedSchedule]);
 
+    const renderContent = () => {
+        return (
+            <View className="flex-1 bg-gray-50">
+                {/* Header */}
+                <View className="bg-white pt-12 pb-6 px-6 shadow-sm">
+                    <Text className="text-2xl text-center font-bold text-gray-800">Seat Availability</Text>
+                </View>
 
-    return(
-        <ScrollView>
-            <View>
-                <Text className="text-2xl text-center font-bold mt-5"> Seat Availability </Text>
-                <View>
-                    <View className="mx-5 my-2">
-                        <Text className="ml-3">Date</Text>
-                        <DatePickerField
-                            date={selectedDate}
-                            setDate={setSelectedDate}
-                            placeholder="Pick your date"
-                            mode="date"
-                        />
+                {/* Form Section */}
+                <View className="mx-5 mt-6">
+                    <View className="bg-white rounded-2xl p-6 shadow-sm mb-4">
+                        <Text className="text-lg font-semibold text-gray-800 mb-3">Select Date & Time</Text>
+                        
+                        <View className="mb-4">
+                            <Text className="text-gray-700 font-medium mb-2">Date</Text>
+                            <DatePickerField
+                                date={selectedDate}
+                                setDate={setSelectedDate}
+                                placeholder="Pick your date"
+                                mode="date"
+                            />
+                        </View>
+
+                        {selectedDate && (
+                            <View style={{ zIndex: 9999 }}>
+                                <Text className="text-gray-700 font-medium mb-2">Time</Text>
+                                <DropdownMenu
+                                    placeholder="Select the time"
+                                    options={schedules}
+                                    selectedValue={selectedSchedule}
+                                    onSelect={(value) => setSelectedSchedule(value)}
+                                    zIndex={9999}
+                                    highZIndex={true}
+                                    open={dropdownOpenTime}
+                                    setOpen={setDropdownOpenTime}
+                                />
+                            </View>
+                        )}
                     </View>
 
-                    {selectedDate && (
-                        <View className="mx-5 my-2" style={{ zIndex: 2000 }}>
-                            <Text className="ml-3 my-2">Time</Text>
-                            <DropdownMenu
-                                placeholder="Select the time"
-                                options={schedules}
-                                selectedValue={selectedSchedule}
-                                onSelect={(value) => setSelectedSchedule(value)}
-                                zIndex={2000}
-                                open={dropdownOpenTime}
-                                setOpen={setDropdownOpenTime}
+                    {/* Seat Map Section */}
+                    {selectedSchedule && (
+                        <View className="bg-white rounded-2xl p-6 shadow-sm">
+                            <Text className="text-xl font-bold text-gray-800 mb-4">Seat Allocation</Text>
+
+                            <SeatMap
+                                seatCount={50}
+                                occupiedSeats={occupiedSeats}
+                                editable={false}
                             />
+
+                            <View className="flex-row justify-around items-center mt-6 p-4 bg-gray-50 rounded-xl">
+                                <View className="items-center">
+                                    <Text className="text-lg font-semibold text-red-600">Total Occupied</Text>
+                                    <Text className="text-2xl font-bold text-red-700">{occupiedSeatCount}</Text>
+                                </View>
+                                <View className="items-center">
+                                    <Text className="text-lg font-semibold text-green-600">Total Remaining</Text>
+                                    <Text className="text-2xl font-bold text-green-700">{bus?.seatingCapacity - occupiedSeatCount}</Text>
+                                </View>
+                            </View>
                         </View>
                     )}
                 </View>
             </View>
+        );
+    };
 
-            {selectedSchedule && (
-                <View className="mx-7 my-5">
-                    <Text className="text-xl font-bold">Seat Allocation</Text>
-
-                    <SeatMap
-                        seatCount={50}
-                        occupiedSeats={occupiedSeats}
-                        editable={false}
-                    />
-
-                    <View className="flex justify-center items-center my-5">
-                        <Text className="text-xl font-bold mx-7">Total Occupied - {occupiedSeatCount}</Text>
-                        <Text className="text-xl font-bold mx-7">Total Remaining - {bus.seatingCapacity - occupiedSeatCount}</Text>
-                    </View>
-
-                </View>
-            )}
-        </ScrollView>
+    return (
+        <FlatList
+            data={[{ key: 'content' }]}
+            renderItem={() => renderContent()}
+            keyExtractor={(item) => item.key}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ flexGrow: 1 }}
+        />
     );
 }
 

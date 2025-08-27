@@ -1,8 +1,8 @@
-import {View, Text, Pressable, ScrollView} from 'react-native';
+import {View, Text, Pressable, ScrollView, Alert} from 'react-native';
 import DatePickerField from '@/components/datepicker';
 import React, {useEffect, useState} from 'react';
 import {getBusById} from "@/api/busAPI";
-import {Ionicons} from "@expo/vector-icons";
+import {Ionicons, Feather} from "@expo/vector-icons";
 import {addNewSchedule, getSchedulesByBusId} from "@/api/busScheduleAPI";
 import TimePickerField from "@/components/timepicker";
 import CustomButton from "@/components/customButton";
@@ -15,7 +15,7 @@ const CreateSchedule = () => {
     const [schedule, setSchedule] = useState<BusSchedule[]>([]);
     const [userId, setUserId] = useState<string | null>(null);
     const [bus, setBus] = useState<Bus | null>(null);
-
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchUserId = async () => {
@@ -59,8 +59,13 @@ const CreateSchedule = () => {
         fetchUserData();
     }, [userId]);
 
-
     const handleCreateSchedule = async () => {
+        if (!selectedDate || !selectedTime) {
+            Alert.alert("Missing Information", "Please select both date and time");
+            return;
+        }
+
+        setLoading(true);
         const formattedDate = selectedDate ? selectedDate.toISOString().split('T')[0] : 'No date';
         const formattedTime = selectedTime
             ? `${selectedTime.getHours()}:${selectedTime.getMinutes().toString().padStart(2, '0')}`
@@ -79,72 +84,118 @@ const CreateSchedule = () => {
                 const updatedSchedules = await getSchedulesByBusId(userId);
                 setSchedule(updatedSchedules || []);
             }
+            Alert.alert("Success", "Schedule created successfully!");
+            setSelectedDate(null);
+            setSelectedTime(null);
         } catch (error) {
+            Alert.alert("Error", "Failed to create schedule");
             console.log("Error creating schedule:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
-
     return (
-        <View className="flex-1 bg-white">
-            <View className="mx-5 my-2">
-                <Text className="ml-3">Date</Text>
-                <DatePickerField
-                    date={selectedDate}
-                    setDate={setSelectedDate}
-                    placeholder="Pick your date"
-                    mode="date"
-                />
+        <ScrollView className="flex-1 bg-gray-50" showsVerticalScrollIndicator={false}>
+            {/* Header Section */}
+            <View className="bg-white pt-12 pb-8 px-6 shadow-sm">
+                <Text className="text-3xl font-bold text-center text-gray-800 mb-2">Create Schedule</Text>
+                <Text className="text-gray-500 text-center">Add new bus schedules for your route</Text>
             </View>
 
-            <View className="mx-5 my-2">
-                <Text className="ml-3">Time</Text>
-                <TimePickerField
-                    time={selectedTime}
-                    setTime={setSelectedTime}
-                />
-            </View>
+            {/* Form Section */}
+            <View className="mx-5 mt-6">
+                <View className="bg-white rounded-2xl p-6 shadow-sm mb-6">
+                    <Text className="text-xl font-semibold text-gray-800 mb-4">Schedule Details</Text>
+                    
+                    <View className="mb-4">
+                        <Text className="text-gray-700 font-medium mb-2">Date</Text>
+                        <DatePickerField
+                            date={selectedDate}
+                            setDate={setSelectedDate}
+                            placeholder="Pick your date"
+                            mode="date"
+                        />
+                    </View>
 
-            <View className="mx-5 my-2">
-                <CustomButton
-                    title="+ Add Schedule"
-                    onPress={handleCreateSchedule}
-                />
-            </View>
+                    <View className="mb-6">
+                        <Text className="text-gray-700 font-medium mb-2">Time</Text>
+                        <TimePickerField
+                            time={selectedTime}
+                            setTime={setSelectedTime}
+                        />
+                    </View>
 
-            <ScrollView className="mx-5 mt-10 gap-3">
-                {schedule.length > 0 ? (
-                    schedule.map((item, index) => (
-                        <View key={index} className="w-full h-40 bg-[#F7D8D4] rounded-3xl mb-3">
-                            <Pressable className="flex flex-row w-full h-full p-4">
-                                <View className="w-20 flex items-left justify-center mx-3">
-                                    <Ionicons name="bus" size={30} color="#78232A" />
-                                </View>
+                    <CustomButton
+                        title="+ Add Schedule"
+                        onPress={handleCreateSchedule}
+                        disabled={!selectedDate || !selectedTime || loading}
+                        loading={loading}
+                        bgVariant="success"
+                    />
+                </View>
 
-                                <View className="w-2/3 flex justify-center gap-4">
-                                    <View className="flex flex-row justify-between mx-2">
-                                        <Text className="text-lg font-bold text-red-950">{item.routeNo}</Text>
-                                        <Text className="text-lg font-bold text-red-950">{item.route}</Text>
-                                    </View>
-
-                                    <View className="flex flex-row justify-center gap-8 mx-3">
-                                        <Text className="text-lg font-bold text-red-950">{item.date.split('T')[0]}</Text>
-                                        <Text className="text-lg font-bold text-red-950">{item.scheduledTime}</Text>
-                                    </View>
-
-                                    <View className="flex flex-row justify-center gap-8">
-                                        <Text className="text-lg font-bold text-red-950">{item.seatingCapacity>0 ? 'Seats Available' : 'No Seats'}</Text>
-                                    </View>
-                                </View>
-                            </Pressable>
+                {/* Schedules List Section */}
+                <View className="bg-white rounded-2xl p-6 shadow-sm">
+                    <View className="flex-row items-center mb-4">
+                        <View className="bg-red-100 p-2 rounded-lg mr-3">
+                            <Feather name="calendar" size={20} color="#dc2626" />
                         </View>
-                    ))
-                ) : (
-                    <Text className="text-center text-lg text-gray-500">No schedules available</Text>
-                )}
+                        <Text className="text-xl font-semibold text-gray-800">Your Schedules</Text>
+                    </View>
 
-            </ScrollView>
-        </View>
+                    {schedule.length > 0 ? (
+                        schedule.map((item, index) => (
+                            <View key={index} className="w-full bg-red-200 rounded-2xl mb-4 p-5 shadow-sm border border-red-100">
+                                <View className="flex-row items-center mb-3">
+                                    <View className="bg-red-100 p-3 rounded-full mr-3">
+                                        <Ionicons name="bus" size={24} color="#dc2626" />
+                                    </View>
+                                    <View className="flex-1">
+                                        <Text className="text-lg font-bold text-red-800">
+                                            Route {item.routeNo}
+                                        </Text>
+                                        <Text className="text-sm text-red-700">{item.route}</Text>
+                                    </View>
+                                </View>
+
+                                <View className="flex-row justify-between items-center mb-3">
+                                    <View className="bg-white px-3 py-2 rounded-lg">
+                                        <Text className="text-sm text-gray-600">Date</Text>
+                                        <Text className="text-base font-semibold text-gray-900">
+                                            {item.date.split('T')[0]}
+                                        </Text>
+                                    </View>
+                                    <View className="bg-white px-3 py-2 rounded-lg">
+                                        <Text className="text-sm text-gray-600">Time</Text>
+                                        <Text className="text-base font-semibold text-gray-900">
+                                            {item.scheduledTime}
+                                        </Text>
+                                    </View>
+                                </View>
+
+                                <View className="bg-white px-3 py-2 rounded-lg">
+                                    <Text className="text-sm text-gray-600">Status</Text>
+                                    <Text className={`text-base font-semibold ${
+                                        item.seatingCapacity > 0 ? 'text-green-700' : 'text-red-700'
+                                    }`}>
+                                        {item.seatingCapacity > 0 ? 'Seats Available' : 'No Seats'}
+                                    </Text>
+                                </View>
+                            </View>
+                        ))
+                    ) : (
+                        <View className="items-center py-8">
+                            <View className="bg-gray-100 p-4 rounded-full mb-3">
+                                <Feather name="calendar" size={32} color="#9ca3af" />
+                            </View>
+                            <Text className="text-center text-lg text-gray-500 mb-2">No schedules available</Text>
+                            <Text className="text-center text-sm text-gray-400">Create your first schedule above</Text>
+                        </View>
+                    )}
+                </View>
+            </View>
+        </ScrollView>
     );
 };
 

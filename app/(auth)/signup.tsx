@@ -17,6 +17,7 @@ import {Link, useRouter} from "expo-router";
 import OAuth from "@/components/OAuth";
 import PasswordField from "@/components/passwordField";
 import {useAuthStore} from "@/store/authStore";
+import {Feather} from "@expo/vector-icons";
 
 interface User {
     name: string;
@@ -42,6 +43,16 @@ const SignUp = () => {
     const {user, isLoading,signup} = useAuthStore();
 
     const onSignUpPress = async(payload: User) => {
+        if (!form.name || !form.email || !form.nic || !form.password || !form.confirmPassword) {
+            Alert.alert("Missing Information", "Please fill in all fields");
+            return;
+        }
+
+        if (form.password !== form.confirmPassword) {
+            Alert.alert("Password Mismatch", "Passwords do not match");
+            return;
+        }
+
         const response = await signup({
             ...payload,
             contactNo: '',
@@ -54,42 +65,61 @@ const SignUp = () => {
             Alert.alert("Error:", response.error);
             return;
         }
+        Alert.alert("Success", "Account created successfully! Please sign in.");
         router.push("/login")
     }
+
+    const isFormValid = form.name && form.email && form.nic && form.password && form.confirmPassword && (form.password === form.confirmPassword);
 
     return (
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <ScrollView className="flex-1 bg-white" keyboardShouldPersistTaps="handled">
-                    <View className="flex-1 bg-white">
-                        <View className="relative w-full h-[250px]">
-                            <Image
-                                source={images.signUpCar}
-                                className="z-0 w-full h-[250px]"
-                            />
-
-                            <Text className="text-4xl text-center text-black font-JakartaBold bottom-10">
+                <ScrollView className="flex-1 bg-gray-50" keyboardShouldPersistTaps="handled">
+                    {/* Header Section with Logo */}
+                    <View className="bg-white pt-12 pb-8 px-6 shadow-sm">
+                        <View className="items-center">
+                            <View className="bg-red-100 p-5 rounded-full mb-4">
+                                <Image
+                                    source={images.BusLogo}
+                                    className="w-48 h-48"
+                                    resizeMode="contain"
+                                />
+                            </View>
+                            <Text className="text-3xl font-bold text-center text-gray-800 mb-2">
                                 Create Your Account
                             </Text>
+                            <Text className="text-gray-500 text-center">
+                                Join X-Bus and start your journey
+                            </Text>
                         </View>
+                    </View>
 
-                        <View className="p-5">
-                            <View className="mt-3">
-                                <Text className="text-lg font-JakartaSemiBold">Username</Text>
+                    {/* Form Section */}
+                    <View className="mx-5 mt-6">
+                        <View className="bg-white rounded-2xl p-6 shadow-sm">
+                            <View className="flex-row items-center justify-center mb-4">
+                                <View className="bg-red-100 p-2 rounded-lg mr-3">
+                                    <Feather name="user-check" size={20} color="#dc2626" />
+                                </View>
+                                <Text className="text-xl font-semibold text-gray-800">Account Details</Text>
+                            </View>
+
+                            <View className="mb-4">
+                                <Text className="text-gray-700 font-medium mb-2">Full Name</Text>
                                 <InputField
-                                    label="Username"
-                                    placeholder="Enter your username"
+                                    label="Full Name"
+                                    placeholder="Enter your full name"
                                     icon="person-outline"
                                     value={form.name}
                                     onChangeText={(value) => setForm({...form, name: value})}
                                 />
                             </View>
 
-                            <View className="mt-3">
-                                <Text className="text-lg font-JakartaSemiBold">Email</Text>
+                            <View className="mb-4">
+                                <Text className="text-gray-700 font-medium mb-2">Email Address</Text>
                                 <InputField
                                     label="Email"
-                                    placeholder="Enter your email"
+                                    placeholder="Enter your email address"
                                     icon="mail-outline"
                                     value={form.email}
                                     onChangeText={(value) => setForm({...form, email: value})}
@@ -97,30 +127,30 @@ const SignUp = () => {
                                 />
                             </View>
 
-                            <View className="mt-3">
-                                <Text className="text-lg font-JakartaSemiBold">NIC</Text>
+                            <View className="mb-4">
+                                <Text className="text-gray-700 font-medium mb-2">NIC Number</Text>
                                 <InputField
-                                    label="NIC "
-                                    placeholder="Enter your NIC"
+                                    label="NIC"
+                                    placeholder="Enter your NIC number"
                                     icon="id-card-outline"
                                     value={form.nic}
                                     onChangeText={(value) => setForm({...form, nic: value})}
                                 />
                             </View>
 
-                            <View className="mt-3">
-                                <Text className="text-lg font-JakartaSemiBold">Password</Text>
+                            <View className="mb-4">
+                                <Text className="text-gray-700 font-medium mb-2">Password</Text>
                                 <PasswordField
                                     label="Password"
-                                    placeholder="Enter your password"
+                                    placeholder="Create a strong password"
                                     icon="lock-closed-outline"
                                     value={form.password}
                                     onChangeText={(value) => setForm({...form, password: value})}
                                 />
                             </View>
 
-                            <View className="mt-3">
-                                <Text className="text-lg font-JakartaSemiBold">Confirm Password</Text>
+                            <View className="mb-6">
+                                <Text className="text-gray-700 font-medium mb-2">Confirm Password</Text>
                                 <PasswordField
                                     label="Confirm Password"
                                     placeholder="Confirm your password"
@@ -130,23 +160,29 @@ const SignUp = () => {
                                 />
                             </View>
 
-                            <View className="mt-5">
-                                <CustomButton
-                                    title="Sign Up"
-                                    onPress={() => onSignUpPress(form)}
-                                />
-                            </View>
-
-                            {/*<OAuth/>*/}
-
-                            <Link
-                                href="/login"
-                                className="text-lg text-center text-general-200 mt-2"
-                            >
-                                Already have an account?{" "}
-                                <Text className="text-danger-500">Login</Text>
-                            </Link>
+                            <CustomButton
+                                title="Create Account"
+                                onPress={() => onSignUpPress(form)}
+                                disabled={!isFormValid || isLoading}
+                                loading={isLoading}
+                                bgVariant="primary"
+                            />
                         </View>
+
+                        {/* Login Link */}
+                        <View className="bg-white rounded-2xl p-6 shadow-sm mt-4">
+                            <View className="flex-row items-center justify-center">
+                                <Text className="text-gray-600">Already have an account? </Text>
+                                <Link href="/login">
+                                    <Text className="text-red-600 font-semibold">Sign In</Text>
+                                </Link>
+                            </View>
+                        </View>
+
+                        {/* OAuth Section (commented out for now) */}
+                        {/*<View className="mt-4">
+                            <OAuth/>
+                        </View>*/}
                     </View>
                 </ScrollView>
             </TouchableWithoutFeedback>
