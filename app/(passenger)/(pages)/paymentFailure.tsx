@@ -9,7 +9,7 @@ const PaymentFailure = () => {
     return(
         <View className="flex-1 bg-white justify-center items-center p-6">
             <Image
-                source={images.success}
+                source={images.failure}
                 className="w-72 h-64"
                 resizeMode="contain"
             />

@@ -4,8 +4,8 @@ export const addNewFeedback = async (data: {
     passengerName: string;
     busRegNo: string | null;
     message: string;
-    userId: number;
-}) => {
+    userId: number
+}, description: string, userId: string) => {
     try {
         const response = await api.post(`/feedback/addNewFeedback`, data);
         return response;

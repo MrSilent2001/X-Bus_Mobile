@@ -40,3 +40,19 @@ export const getBusRegNo = async () => {
         console.log(error);
     }
 }
+
+export const getBusByScheduleId = async (scheduleId: string | null) => {
+    try {
+        const response = await api.get(`/bus/getBusScheduleById`,{
+            params:{
+                scheduleId
+            }
+        });
+
+        if (response.status === 200) {
+            return response.data;
+        }
+    }catch(error) {
+        console.log(error);
+    }
+}

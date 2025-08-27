@@ -100,6 +100,43 @@ type PaymentData = {
         };
     };
 };
+
+type BusPaymentData = {
+    id: number;
+    date: string;
+    amount: number;
+    status: string;
+    user: {
+        id: number;
+        name: string;
+        nic: string;
+        contactNo: string;
+        email: string;
+        password: string;
+        profilePicture: string;
+        role: string;
+    };
+    schedule: {
+        id: number;
+        date: string;
+        scheduledTime: string;
+        seatingCapacity: number;
+        totalIncome: number;
+    };
+    bus: {
+        id: number;
+        ownerId: string;
+        regNo: string;
+        fleetName: string;
+        routeNo: string;
+        route: string;
+        seatingCapacity: number;
+        busFare: string;
+        password: string;
+        profilePicture: string;
+    };
+}
+
 declare interface MarkerData {
     latitude: number;
     longitude: number;

@@ -3,7 +3,7 @@ import {SeatMap} from "@/components/seatMap";
 import DatePickerField from "@/components/datepicker";
 import DropdownMenu from "@/components/dropdown";
 import React, {useEffect, useState} from "react";
-import {getBusRoutes} from "@/api/busAPI";
+import {getBusByScheduleId, getBusRoutes} from "@/api/busAPI";
 import CustomButton from "@/components/customButton";
 import {getDailyRouteSchedules} from "@/api/busScheduleAPI";
 import {getReservedSeats} from "@/api/reservationAPI";
@@ -16,6 +16,7 @@ const SeatReservation = () => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
     const [selectedSchedule, setSelectedSchedule] = useState<string | null>(null);
+    const [selectedBus, setSelectedBus] = useState<string | null>(null);
     const [dropdownOpenRoute, setDropdownOpenRoute] = useState(false);
     const [dropdownOpenTime, setDropdownOpenTime] = useState(false);
     const [routes, setRoutes] = useState<{ label: string; value: string }[]>([]);
@@ -93,6 +94,28 @@ const SeatReservation = () => {
         fetchOccupiedSeats();
     }, [selectedDate, selectedRoute, selectedSchedule]);
 
+
+    useEffect(() => {
+        if (!selectedSchedule) return;
+
+        const fetchBus = async () => {
+            try {
+                const scheduleId = selectedSchedule.toString();
+                const busData = await getBusByScheduleId(scheduleId);
+                if (busData) {
+                    setSelectedBus(busData.id.toString());
+                }
+            } catch (error) {
+                console.log("Error fetching bus:", error);
+            }
+        };
+
+        fetchBus();
+    }, [selectedSchedule]);
+
+
+    console.log("selectedBus",selectedBus)
+
     const handleSeatPress = (seatNumber: number) => {
         console.log(`Seat ${seatNumber} selected`);
     };
@@ -120,7 +143,8 @@ const SeatReservation = () => {
                 busFare,
                 selectedSchedule,
                 selectedDate,
-                user
+                user,
+                selectedBus
             );
 
             const { error } = await initPaymentSheet({
@@ -224,7 +248,8 @@ const SeatReservation = () => {
                                     placeholder="Select the time"
                                     options={schedules}
                                     selectedValue={selectedSchedule}
-                                    onSelect={(value) => setSelectedSchedule(value)}
+                                    onSelect={
+                                    (value) => setSelectedSchedule(value)}
                                     zIndex={2000}
                                     open={dropdownOpenTime}
                                     setOpen={setDropdownOpenTime}
