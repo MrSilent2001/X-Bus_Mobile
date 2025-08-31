@@ -25,7 +25,7 @@ const ResetPassword = () => {
         confirmPassword: ''
     });
     const [loading, setLoading] = useState(false);
-    const {checkAuth, email} = useAuthStore();
+    const {checkAuth, user} = useAuthStore();
 
     useEffect(() => {
         checkAuth();
@@ -49,7 +49,7 @@ const ResetPassword = () => {
 
         setLoading(true);
         try {
-            const response = await axios.post(`${API_URL}/auth/reset-password/${email}`, {
+            const response = await axios.post(`${API_URL}/auth/reset-password/${user?.email}`, {
                 password: form.password,
                 confirmPassword: form.confirmPassword
             })
@@ -128,10 +128,11 @@ const ResetPassword = () => {
                             </View>
 
                             <CustomButton
-                                title="Reset Password"
+                                title={
+                                    loading ? "ResetING Password..." : "Reset Password"
+                                }
                                 onPress={onResetPassword}
                                 disabled={!isFormValid || loading}
-                                loading={loading}
                                 bgVariant="success"
                             />
 

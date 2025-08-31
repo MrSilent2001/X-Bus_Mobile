@@ -87,10 +87,11 @@ const ForgotPassword = () => {
                             </View>
 
                             <CustomButton
-                                title="Send Verification Code"
+                                title={
+                                    loading ? "Sending Verification Code..." : "Send Verification Code"
+                                }
                                 onPress={onSendOTP}
                                 disabled={!form.email || loading}
-                                loading={loading}
                                 bgVariant="primary"
                             />
 
