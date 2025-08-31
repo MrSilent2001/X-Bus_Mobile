@@ -129,7 +129,7 @@ const ResetPassword = () => {
 
                             <CustomButton
                                 title={
-                                    loading ? "ResetING Password..." : "Reset Password"
+                                    loading ? "Resetting Password..." : "Reset Password"
                                 }
                                 onPress={onResetPassword}
                                 disabled={!isFormValid || loading}

@@ -45,7 +45,7 @@ const OperatorLayout = () => {
                     ),
                     tabBarIcon: ({color, size}) =>
                         <Ionicons name="bookmark-outline" size={size} color={color}/>
-                        // <MaterialCommunityIcons name="seat-passenger" size={30} color="#aeabab" className="text-center m-auto"/>
+                    // <MaterialCommunityIcons name="seat-passenger" size={30} color="#aeabab" className="text-center m-auto"/>
                 }}
             />
             <Tabs.Screen

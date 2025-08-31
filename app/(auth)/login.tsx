@@ -118,7 +118,6 @@ const Login = () => {
                                 title="Sign In"
                                 onPress={() => onSignInPress(form)}
                                 disabled={!form.identifier || !form.password || isLoading}
-                                loading={isLoading}
                                 bgVariant="primary"
                             />
 

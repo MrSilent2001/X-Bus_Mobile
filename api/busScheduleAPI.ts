@@ -24,21 +24,33 @@ export const getAllBusSchedules = async (date?: string, route?: string) => {
     }
 }
 
-
-export const getDailyRouteSchedules = async (date: Date | null, route: string | null) => {
+export const getDailyRouteSchedules = async (date: string | null, route: string | null) => {
     try {
-        const params ={ date: date, route: route };
+        console.log("API call - date:", date, "route:", route);
+        
+        const params: { date?: string; route?: string } = {};
+
+        if (date) {
+            params.date = date;
+        }
+
+        if (route) {
+            params.route = route;
+        }
 
         const response = await api.get(`/schedule/getDailyRouteSchedule`,{
             params: params
         });
+
+        console.log("API response:", response.data);
 
         if (response.status === 200) {
             return response.data;
         }
 
     }catch (error){
-        console.log(error);
+        console.error("API error:", error);
+        throw error;
     }
 }
 
@@ -57,7 +69,6 @@ export const getSchedulesByBusId = async (id: string | null) => {
         console.log(error);
     }
 }
-
 
 export const addNewSchedule = async (data: BusSchedule) => {
     try {
