@@ -1,4 +1,3 @@
-
 import {Pressable, Text, View} from "react-native";
 import {useEffect, useState} from "react";
 import {getFormattedDate} from "@/util/formatDate";

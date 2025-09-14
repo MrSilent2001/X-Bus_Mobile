@@ -26,11 +26,14 @@ interface authType{
     user: User | null
     token: string |null
     isLoading: boolean
+    isInitialized: boolean
     setUser: (user: User) => void;
     login: (payload: LoginPayload) => Promise<AuthResponse>
     signup: (payload: User) => Promise<AuthResponse>
-    checkAuth: () => void
-    logout: () => void
+    checkAuth: () => Promise<{ isAuthenticated: boolean; user?: User; token?: string }>
+    initializeAuth: () => Promise<{ isAuthenticated: boolean; user?: User; token?: string }>
+    logout: () => Promise<{ success: boolean; error?: string }>
+    clearAuthData: () => Promise<void>
 }
 
 interface Bus{

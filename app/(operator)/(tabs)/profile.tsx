@@ -106,7 +106,7 @@ const Profile = () => {
                             className="w-48 h-48 rounded-full border-4 border-white shadow-lg"
                         />
                         <View className="absolute bottom-0 right-0 bg-red-100 p-3 rounded-full shadow-lg">
-                            <Feather name="bus" size={24} color="#dc2626" />
+                            <Feather name="truck" size={24} color="#dc2626" />
                         </View>
                     </View>
                     <Text className="text-xl font-semibold text-red-800 mt-4 text-center">
@@ -121,7 +121,7 @@ const Profile = () => {
             {/* Bus Information Section */}
             <View className="bg-white mx-6 mt-4 rounded-2xl p-6 shadow-sm">
                 <Text className="text-2xl font-semibold text-gray-800 mb-6">Bus Information</Text>
-                
+
                 {fields.map((field) => (
                     <View className="mb-5" key={field.label}>
                         <View className="flex-row items-center mb-2">
@@ -143,9 +143,9 @@ const Profile = () => {
 
             {/* Action Buttons */}
             <View className="mx-6 mt-6 mb-8">
-                <CustomButton 
-                    title="Logout" 
-                    onPress={handleLogout} 
+                <CustomButton
+                    title="Logout"
+                    onPress={handleLogout}
                     bgVariant="danger"
                 />
             </View>

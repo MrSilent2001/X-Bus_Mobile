@@ -10,6 +10,38 @@ const useLocation = () => {
     const [errMsg, setErrMsg] = useState<string>("");
     const [location, setLocation] = useState<LocationType | null>(null);
 
+    const requestLocation = async (): Promise<void> => {
+        try {
+            const { status } = await Location.requestForegroundPermissionsAsync();
+
+            if (status !== "granted") {
+                setErrMsg("Permission to access location was denied!");
+                return;
+            }
+
+            const currentLocation = await Location.getCurrentPositionAsync({
+                accuracy: Location.Accuracy.Highest,
+            });
+
+            const { latitude, longitude } = currentLocation.coords;
+            setLocation({ latitude, longitude });
+            setErrMsg("");
+
+            try {
+                const response = await Location.reverseGeocodeAsync({
+                    latitude,
+                    longitude,
+                });
+                console.log("UserLocation (reverse geocode):", response);
+            } catch (err) {
+                console.error("Reverse geocoding error:", err);
+            }
+        } catch (error) {
+            console.error("Location request error:", error);
+            setErrMsg("Failed to get location. Please try again.");
+        }
+    };
+
     useEffect(() => {
         let subscription: Location.LocationSubscription | null = null;
 
@@ -60,7 +92,7 @@ const useLocation = () => {
         };
     }, []);
 
-    return { location, errMsg };
+    return { location, errMsg, requestLocation };
 };
 
 export default useLocation;

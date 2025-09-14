@@ -7,10 +7,10 @@ import {Link, useRouter} from "expo-router";
 import {useEffect, useState} from "react";
 import PasswordField from "@/components/passwordField";
 import {useAuthStore} from "@/store/authStore";
-import {Alert} from "react-native";
 import {parseJwt} from "@/util/parseJwt";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {Feather} from "@expo/vector-icons";
+import Toast from "@/components/Toast";
 
 interface User{
     identifier: string;
@@ -25,37 +25,68 @@ const Login = () => {
         identifier: '',
         password: ''
     });
+    const [toast, setToast] = useState<{
+        visible: boolean;
+        message: string;
+        type: 'success' | 'error' | 'info' | 'warning';
+    }>({
+        visible: false,
+        message: '',
+        type: 'info',
+    });
 
-    useEffect(() => {
-        checkAuth();
-    }, []);
+    const showToast = (message: string, type: 'success' | 'error' | 'info' | 'warning') => {
+        setToast({
+            visible: true,
+            message,
+            type,
+        });
+    };
+
+    // useEffect(() => {
+    //     checkAuth();
+    // }, []);
 
     const onSignInPress = async(form: User) => {
+        if (!form.identifier.trim() || !form.password.trim()) {
+            showToast('Please fill in all fields', 'error');
+            return;
+        }
+
         const response = await login(form);
-        console.log(response)
+        console.log(response);
 
         if (!response.success){
-            Alert.alert("Error:", response.error);
+            showToast(response.error || 'Login failed', 'error');
             return;
         }
 
         const freshToken = await AsyncStorage.getItem('token');
         if (!freshToken){
-            Alert.alert("Login Error", "Token not found after login");
+            showToast('Login failed - token not found', 'error');
             return;
         }
 
-        const decodedToken = parseJwt(freshToken);
-        const role = decodedToken.role;
+        try {
+            const decodedToken = parseJwt(freshToken);
+            const role = decodedToken.role;
 
-        if (role === "passenger") {
-            router.push("/(passenger)/(tabs)/home")
-        } else if (role === "operator") {
-            router.push("/(operator)/(tabs)/home")
-        } else {
-            router.push("/+not-found")
+            showToast('Login successful!', 'success');
+
+            // Small delay to show success message
+            setTimeout(() => {
+                if (role === "passenger") {
+                    router.replace("/(passenger)/(tabs)/home");
+                } else if (role === "operator") {
+                    router.replace("/(operator)/(tabs)/home");
+                } else {
+                    router.replace("/+not-found");
+                }
+            }, 1000);
+
+        } catch (error) {
+            showToast('Invalid token format', 'error');
         }
-
     }
 
     return (
@@ -95,7 +126,7 @@ const Login = () => {
                                 <Text className="text-gray-700 font-medium mb-2">Email/Registration No</Text>
                                 <InputField
                                     label="Email"
-                                    placeholder="Enter your email or registration number"
+                                    placeholder="Enter your email or reg. no"
                                     icon="mail-outline"
                                     value={form.identifier}
                                     onChangeText={(value) => setForm({...form, identifier: value})}
@@ -138,11 +169,19 @@ const Login = () => {
                             </View>
                         </View>
 
-                        {/* OAuth Section (commented out for now) */}
+                        {/* OAuth Section */}
                         {/*<View className="mt-4">
                             <OAuth/>
                         </View>*/}
                     </View>
+
+                    {/* Toast Component */}
+                    <Toast
+                        visible={toast.visible}
+                        message={toast.message}
+                        type={toast.type}
+                        onHide={() => setToast(prev => ({ ...prev, visible: false }))}
+                    />
                 </ScrollView>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
