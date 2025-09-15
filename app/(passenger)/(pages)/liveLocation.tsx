@@ -47,7 +47,7 @@ const LiveLocation: React.FC = () => {
         map.panTo({ lat, lng });
       }
 
-      function addOrUpdateMarker(id, lat, lng, title, isCurrent) {
+      function addOrUpdateMarker(id, lat, lng, title, isCurrent, isBus) {
         if (!map) return;
         if (addedMarkers[id]) {
           addedMarkers[id].setPosition({ lat, lng });
@@ -65,7 +65,9 @@ const LiveLocation: React.FC = () => {
             fillOpacity: 1,
             strokeColor: '#1E40AF',
             strokeWeight: 2,
-          } : undefined,
+          } : (isBus ? {
+            url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+          } : undefined),
         });
         addedMarkers[id] = marker;
       }
@@ -75,14 +77,17 @@ const LiveLocation: React.FC = () => {
           const data = JSON.parse(event.data);
           if (data.type === 'init') {
             initMap();
-            addOrUpdateMarker('current-location', data.latitude, data.longitude, 'You are here', true);
+            addOrUpdateMarker('current-location', data.latitude, data.longitude, 'You are here', true, false);
             moveTo(data.latitude, data.longitude);
           } else if (data.type === 'location-update') {
-            addOrUpdateMarker('current-location', data.latitude, data.longitude, 'You are here', true);
+            addOrUpdateMarker('current-location', data.latitude, data.longitude, 'You are here', true, false);
           } else if (data.type === 'search') {
             const id = data.id || ('search-' + Date.now());
-            addOrUpdateMarker(id, data.latitude, data.longitude, data.title || 'Searched location', false);
+            addOrUpdateMarker(id, data.latitude, data.longitude, data.title || 'Searched location', false, false);
             moveTo(data.latitude, data.longitude);
+          } else if (data.type === 'marker') {
+            const id = data.id || ('marker-' + Date.now());
+            addOrUpdateMarker(id, data.latitude, data.longitude, data.title || 'Marker', false, true);
           }
         } catch (e) {
           // no-op
@@ -219,6 +224,25 @@ const LiveLocation: React.FC = () => {
                 })
             );
         }
+
+        // Add predefined bus location markers (Colombo, Kottawa, Kaduwela)
+        const busLocations: LocationType[] = [
+            { id: "bus-colombo", latitude: 6.9271, longitude: 79.8612, title: "Bus - Colombo" },
+            { id: "bus-kottawa", latitude: 6.8416, longitude: 79.9650, title: "Bus - Kottawa" },
+            { id: "bus-kaduwela", latitude: 6.9330, longitude: 79.9850, title: "Bus - Kaduwela" },
+        ];
+
+        busLocations.forEach((bus) => {
+            webviewRef.current?.postMessage(
+                JSON.stringify({
+                    type: "marker",
+                    id: bus.id,
+                    latitude: bus.latitude,
+                    longitude: bus.longitude,
+                    title: bus.title,
+                })
+            );
+        });
     };
 
     return (
